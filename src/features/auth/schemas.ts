@@ -26,6 +26,12 @@ export const setupPasswordSchema = z
     message: "Passwords do not match",
   });
 
+export const loginRequestSchema = z.object({
+  fin: finSchema.shape.fin,
+  password: loginSchema.shape.password,
+});
+
+export type LoginRequest = z.infer<typeof loginRequestSchema>;
 export type FinFormValues = z.infer<typeof finSchema>;
 export type LoginFormValues = z.infer<typeof loginSchema>;
 export type VerifyFormValues = z.infer<typeof verifySchema>;
