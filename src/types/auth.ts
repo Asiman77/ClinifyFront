@@ -34,3 +34,7 @@ export type LoginResponse = {
 export type VerifyIdentityResponse = {
   verified: boolean;
 };
+export type SetupPasswordResponse = {
+  registered: true;
+  message: string;
+};
