@@ -13,7 +13,7 @@ export class BackendError extends Error {
 export type BackendResult<T> = {
   data: T;
   status: number;
-  setCookie: string | null;
+  setCookies: string[];
 };
 
 function getBackendUrl(): string {
@@ -57,6 +57,22 @@ function getErrorMessage(payload: unknown, status: number): string {
   return `Backend request failed with status ${status}`;
 }
 
+function getSetCookies(headers: Headers): string[] {
+  const headersWithCookies = headers as Headers & {
+    getSetCookie?: () => string[];
+  };
+
+  const cookies = headersWithCookies.getSetCookie?.();
+
+  if (cookies?.length) {
+    return cookies;
+  }
+
+  const cookie = headers.get("set-cookie");
+
+  return cookie ? [cookie] : [];
+}
+
 export async function backendRequest<T>(
   path: string,
   options: RequestInit = {},
@@ -92,7 +108,7 @@ export async function backendRequest<T>(
   return {
     data: payload as T,
     status: response.status,
-    setCookie: response.headers.get("set-cookie"),
+    setCookies: getSetCookies(response.headers),
   };
 }
 
