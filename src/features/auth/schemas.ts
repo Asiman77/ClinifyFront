@@ -30,7 +30,12 @@ export const loginRequestSchema = z.object({
   fin: finSchema.shape.fin,
   password: loginSchema.shape.password,
 });
+export const verifyIdentityRequestSchema = z.object({
+  fin: finSchema.shape.fin,
+  password: verifySchema.shape.signature,
+});
 
+export type VerifyIdentityRequest = z.infer<typeof verifyIdentityRequestSchema>;
 export type LoginRequest = z.infer<typeof loginRequestSchema>;
 export type FinFormValues = z.infer<typeof finSchema>;
 export type LoginFormValues = z.infer<typeof loginSchema>;
