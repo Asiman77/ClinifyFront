@@ -1,3 +1,21 @@
+export class BackendError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number,
+    public readonly payload?: unknown,
+  ) {
+    super(message);
+
+    this.name = "BackendError";
+  }
+}
+
+export type BackendResult<T> = {
+  data: T;
+  status: number;
+  setCookie: string | null;
+};
+
 function getBackendUrl(): string {
   const backendUrl = process.env.BACKEND_URL;
 
@@ -22,10 +40,27 @@ async function parseResponseBody(response: Response): Promise<unknown> {
   }
 }
 
+function getErrorMessage(payload: unknown, status: number): string {
+  if (
+    typeof payload === "object" &&
+    payload !== null &&
+    "message" in payload &&
+    typeof payload.message === "string"
+  ) {
+    return payload.message;
+  }
+
+  if (typeof payload === "string" && payload.trim()) {
+    return payload;
+  }
+
+  return `Backend request failed with status ${status}`;
+}
+
 export async function backendRequest<T>(
   path: string,
   options: RequestInit = {},
-): Promise<{ data: T; setCookie: string | null }> {
+): Promise<BackendResult<T>> {
   if (!path.startsWith("/")) {
     throw new Error("Backend path must start with '/'");
   }
@@ -47,13 +82,16 @@ export async function backendRequest<T>(
   const payload = await parseResponseBody(response);
 
   if (!response.ok) {
-    throw new Error(
-      `Backend request failed with status ${response.status}`,
+    throw new BackendError(
+      getErrorMessage(payload, response.status),
+      response.status,
+      payload,
     );
   }
 
   return {
     data: payload as T,
+    status: response.status,
     setCookie: response.headers.get("set-cookie"),
   };
 }
