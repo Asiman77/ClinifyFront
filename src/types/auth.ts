@@ -31,3 +31,6 @@ export type LoginResponse = {
   fin: string;
   roles: Role[];
 };
+export type VerifyIdentityResponse = {
+  verified: boolean;
+};
