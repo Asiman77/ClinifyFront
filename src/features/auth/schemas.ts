@@ -34,7 +34,12 @@ export const verifyIdentityRequestSchema = z.object({
   fin: finSchema.shape.fin,
   password: verifySchema.shape.signature,
 });
+export const setupPasswordRequestSchema = z.object({
+  fin: finSchema.shape.fin,
+  password: setupPasswordSchema.shape.password,
+});
 
+export type SetupPasswordRequest = z.infer<typeof setupPasswordRequestSchema>;
 export type VerifyIdentityRequest = z.infer<typeof verifyIdentityRequestSchema>;
 export type LoginRequest = z.infer<typeof loginRequestSchema>;
 export type FinFormValues = z.infer<typeof finSchema>;
