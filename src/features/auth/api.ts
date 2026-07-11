@@ -4,11 +4,18 @@ import useSWRMutation from "swr/mutation";
 
 import type {
   CheckFinResponse,
+  CurrentUser,
   LoginResponse,
   SetupPasswordResponse,
   VerifyIdentityResponse,
 } from "@/types/auth";
-import { LoginRequest, SetupPasswordRequest, VerifyIdentityRequest } from "./schemas";
+import {
+  LoginRequest,
+  SetupPasswordRequest,
+  VerifyIdentityRequest,
+} from "./schemas";
+
+import useSWR from "swr";
 
 export class AuthApiError extends Error {
   constructor(
@@ -74,6 +81,22 @@ async function postJson<TResponse, TBody>(
   return payload as TResponse;
 }
 
+async function getJson<TResponse>(url: string): Promise<TResponse> {
+  const response = await fetch(url, {
+    method: "GET",
+    credentials: "same-origin",
+    cache: "no-store",
+  });
+
+  const payload = await parseResponse(response);
+
+  if (!response.ok) {
+    throw new AuthApiError(getErrorMessage(payload), response.status, payload);
+  }
+
+  return payload as TResponse;
+}
+
 export function useCheckFin() {
   return useSWRMutation<
     CheckFinResponse,
@@ -103,4 +126,7 @@ export function useSetupPassword() {
     string,
     SetupPasswordRequest
   >("/api/auth/register/setup-password", postJson);
+}
+export function useCurrentUser() {
+  return useSWR<CurrentUser, AuthApiError>("/api/auth/me", getJson);
 }
