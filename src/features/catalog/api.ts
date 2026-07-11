@@ -5,6 +5,7 @@ import useSWR from "swr";
 import type { Department } from "@/types/department";
 import type { PageResponse } from "@/types/pagination";
 import type { DoctorProfile } from "@/types/doctor";
+import { AppointmentType, AvailableSlot } from "@/types/slot";
 
 async function getJson<T>(url: string): Promise<T> {
     const response = await fetch(url, {
@@ -99,4 +100,50 @@ export function useDoctor(
             : null;
 
     return useSWR<DoctorProfile>(url, getJson);
+}
+export type AvailableSlotsQuery = {
+    doctorId?: number | null;
+    date?: string;
+    type?: AppointmentType;
+    page?: number;
+    size?: number;
+    sort?: string;
+};
+
+export function useAvailableSlots(
+    query: AvailableSlotsQuery,
+) {
+    const hasRequiredParameters =
+        query.doctorId !== null &&
+        query.doctorId !== undefined &&
+        query.doctorId > 0 &&
+        Boolean(query.date) &&
+        Boolean(query.type);
+
+    let url: string | null = null;
+
+    if (hasRequiredParameters) {
+        const searchParams = new URLSearchParams();
+
+        searchParams.set("date", query.date!);
+        searchParams.set("type", query.type!);
+
+        if (query.page !== undefined) {
+            searchParams.set("page", String(query.page));
+        }
+
+        if (query.size !== undefined) {
+            searchParams.set("size", String(query.size));
+        }
+
+        if (query.sort?.trim()) {
+            searchParams.set("sort", query.sort.trim());
+        }
+
+        url =
+            `/api/doctors/${query.doctorId}/available-slots` +
+            `?${searchParams.toString()}`;
+    }
+
+    return useSWR<PageResponse<AvailableSlot>>(url, getJson);
 }
