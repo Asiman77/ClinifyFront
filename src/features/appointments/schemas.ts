@@ -18,4 +18,5 @@ export const patientAppointmentRequestSchema: z.ZodType<PatientAppointmentReques
         .trim()
         .max(1000, "Reason cannot be longer than 1000 characters",)
         .optional(),
-});
+})
+    .strict();
