@@ -41,3 +41,6 @@ export type SetupPasswordResponse = {
 export type LogoutResponse = {
   message: string;
 };
+export type SelectRoleResponse = {
+  dashboard: string;
+};

@@ -1,3 +1,4 @@
+import { ROLES } from "@/types/auth";
 import { z } from "zod";
 
 export const finSchema = z.object({
@@ -38,7 +39,11 @@ export const setupPasswordRequestSchema = z.object({
   fin: finSchema.shape.fin,
   password: setupPasswordSchema.shape.password,
 });
+export const selectRoleRequestSchema = z.object({
+  role: z.enum(ROLES),
+});
 
+export type SelectRoleRequest = z.infer<typeof selectRoleRequestSchema>;
 export type SetupPasswordRequest = z.infer<typeof setupPasswordRequestSchema>;
 export type VerifyIdentityRequest = z.infer<typeof verifyIdentityRequestSchema>;
 export type LoginRequest = z.infer<typeof loginRequestSchema>;
