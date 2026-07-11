@@ -8,6 +8,8 @@ import {
     useDoctors,
 } from "@/features/catalog/api";
 import type { AvailableSlot } from "@/types/slot";
+import { AppointmentResponse } from "@/types/appointment";
+import { AppointmentApiError, useCreateAppointment } from "@/features/appointments/api";
 
 const PAGE_SIZE = 10;
 const SLOT_PAGE_SIZE = 50;
@@ -23,6 +25,14 @@ export default function BookAppointmentPage() {
 
     const [selectedSlot, setSelectedSlot] =
         useState<AvailableSlot | null>(null);
+
+    const [reason, setReason] = useState("");
+    const [bookingError, setBookingError] =
+        useState<string | null>(null);
+    const [createdAppointment, setCreatedAppointment] =
+        useState<AppointmentResponse | null>(null);
+
+    const createAppointment = useCreateAppointment();
 
     const {
         data: departments,
@@ -45,6 +55,7 @@ export default function BookAppointmentPage() {
         data: slots,
         error: slotsError,
         isLoading: slotsLoading,
+        mutate: refreshSlots,
     } = useAvailableSlots({
         doctorId,
         date,
@@ -69,6 +80,47 @@ export default function BookAppointmentPage() {
         setSelectedSlot(null);
     }
 
+    async function handleAppointmentCreation() {
+        if (!doctorId || !selectedSlot) {
+            return;
+        }
+
+        setBookingError(null);
+        setCreatedAppointment(null);
+
+        const normalizedReason = reason.trim();
+
+        try {
+            const appointment =
+                await createAppointment.trigger({
+                    doctorId,
+                    startTime: selectedSlot.startTime,
+                    ...(normalizedReason
+                        ? { reason: normalizedReason }
+                        : {}),
+                });
+
+            setCreatedAppointment(appointment);
+            setSelectedSlot(null);
+            setReason("");
+
+            await refreshSlots();
+        } catch (error) {
+            setBookingError(
+                error instanceof Error
+                    ? error.message
+                    : "Appointment could not be created",
+            );
+
+            if (
+                error instanceof AppointmentApiError &&
+                error.status === 409
+            ) {
+                setSelectedSlot(null);
+                await refreshSlots();
+            }
+        }
+    }
     return (
         <main>
             <header>
@@ -217,6 +269,44 @@ export default function BookAppointmentPage() {
                         Time: {formatTime(selectedSlot.startTime)} -{" "}
                         {formatTime(selectedSlot.endTime)}
                     </p>
+                    <label htmlFor="appointment-reason">
+                        Reason
+                    </label>
+                    <textarea
+                        id="appointment-reason"
+                        value={reason}
+                        maxLength={1000}
+                        disabled={createAppointment.isMutating}
+                        onChange={(event) => setReason(event.target.value)}
+                    />
+                    <button
+                        type="button"
+                        disabled={createAppointment.isMutating}
+                        onClick={handleAppointmentCreation}
+                    >
+                        {createAppointment.isMutating
+                            ? "Booking..."
+                            : "Confirm appointment"}
+                    </button>
+                </section>
+            )}
+            {bookingError && (
+                <p role="alert">{bookingError}</p>
+            )}
+
+            {createdAppointment && (
+                <section aria-labelledby="booking-success-title">
+                    <h2 id="booking-success-title">
+                        Appointment created
+                    </h2>
+                    <p>
+                        Doctor: {createdAppointment.doctorFullName}
+                    </p>
+                    <p>
+                        Time: {formatTime(createdAppointment.startTime)} -{" "}
+                        {formatTime(createdAppointment.endTime)}
+                    </p>
+                    <p>Status: {createdAppointment.status}</p>
                 </section>
             )}
         </main>
