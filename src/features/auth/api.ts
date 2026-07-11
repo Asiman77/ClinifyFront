@@ -2,7 +2,8 @@
 
 import useSWRMutation from "swr/mutation";
 
-import type { CheckFinResponse } from "@/types/auth";
+import type { CheckFinResponse, LoginResponse } from "@/types/auth";
+import { LoginRequest } from "./schemas";
 
 export class AuthApiError extends Error {
   constructor(
@@ -75,4 +76,10 @@ export function useCheckFin() {
     string,
     { fin: string }
   >("/api/auth/check-fin", postJson);
+}
+export function useLogin() {
+  return useSWRMutation<LoginResponse, AuthApiError, string, LoginRequest>(
+    "/api/auth/login",
+    postJson,
+  );
 }
