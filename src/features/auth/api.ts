@@ -2,8 +2,8 @@
 
 import useSWRMutation from "swr/mutation";
 
-import type { CheckFinResponse, LoginResponse } from "@/types/auth";
-import { LoginRequest } from "./schemas";
+import type { CheckFinResponse, LoginResponse, VerifyIdentityResponse } from "@/types/auth";
+import { LoginRequest, VerifyIdentityRequest } from "./schemas";
 
 export class AuthApiError extends Error {
   constructor(
@@ -82,4 +82,12 @@ export function useLogin() {
     "/api/auth/login",
     postJson,
   );
+}
+export function useVerifyIdentity() {
+  return useSWRMutation<
+    VerifyIdentityResponse,
+    AuthApiError,
+    string,
+    VerifyIdentityRequest
+  >("/api/auth/register/verify", postJson);
 }
