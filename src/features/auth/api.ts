@@ -2,8 +2,13 @@
 
 import useSWRMutation from "swr/mutation";
 
-import type { CheckFinResponse, LoginResponse, VerifyIdentityResponse } from "@/types/auth";
-import { LoginRequest, VerifyIdentityRequest } from "./schemas";
+import type {
+  CheckFinResponse,
+  LoginResponse,
+  SetupPasswordResponse,
+  VerifyIdentityResponse,
+} from "@/types/auth";
+import { LoginRequest, SetupPasswordRequest, VerifyIdentityRequest } from "./schemas";
 
 export class AuthApiError extends Error {
   constructor(
@@ -90,4 +95,12 @@ export function useVerifyIdentity() {
     string,
     VerifyIdentityRequest
   >("/api/auth/register/verify", postJson);
+}
+export function useSetupPassword() {
+  return useSWRMutation<
+    SetupPasswordResponse,
+    AuthApiError,
+    string,
+    SetupPasswordRequest
+  >("/api/auth/register/setup-password", postJson);
 }
