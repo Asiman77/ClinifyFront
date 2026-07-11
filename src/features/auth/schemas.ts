@@ -1,0 +1,53 @@
+import { ROLES } from "@/types/auth";
+import { z } from "zod";
+
+export const finSchema = z.object({
+  fin: z
+    .string()
+    .trim()
+    .min(1, "FIN is required")
+    .regex(/^[A-Za-z0-9]{7}$/, "FIN must be exactly 7 characters"),
+});
+
+export const loginSchema = z.object({
+  password: z.string().min(1, "Password is required"),
+});
+
+export const verifySchema = z.object({
+  signature: z.string().trim().min(1, "Signature is required"),
+});
+
+export const setupPasswordSchema = z
+  .object({
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string().min(1, "Password confirmation is required"),
+  })
+  .refine(({ password, confirmPassword }) => password === confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match",
+  });
+
+export const loginRequestSchema = z.object({
+  fin: finSchema.shape.fin,
+  password: loginSchema.shape.password,
+});
+export const verifyIdentityRequestSchema = z.object({
+  fin: finSchema.shape.fin,
+  password: verifySchema.shape.signature,
+});
+export const setupPasswordRequestSchema = z.object({
+  fin: finSchema.shape.fin,
+  password: setupPasswordSchema.shape.password,
+});
+export const selectRoleRequestSchema = z.object({
+  role: z.enum(ROLES),
+});
+
+export type SelectRoleRequest = z.infer<typeof selectRoleRequestSchema>;
+export type SetupPasswordRequest = z.infer<typeof setupPasswordRequestSchema>;
+export type VerifyIdentityRequest = z.infer<typeof verifyIdentityRequestSchema>;
+export type LoginRequest = z.infer<typeof loginRequestSchema>;
+export type FinFormValues = z.infer<typeof finSchema>;
+export type LoginFormValues = z.infer<typeof loginSchema>;
+export type VerifyFormValues = z.infer<typeof verifySchema>;
+export type SetupPasswordFormValues = z.infer<typeof setupPasswordSchema>;
