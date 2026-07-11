@@ -38,3 +38,6 @@ export type SetupPasswordResponse = {
   registered: true;
   message: string;
 };
+export type LogoutResponse = {
+  message: string;
+};
