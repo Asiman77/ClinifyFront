@@ -3,6 +3,8 @@
 import useSWRMutation from "swr/mutation";
 
 import type { AppointmentResponse, PatientAppointmentRequest, } from "@/types/appointment";
+import { PageResponse } from "@/types/pagination";
+import useSWR from "swr";
 
 export class AppointmentApiError extends Error {
     constructor(
@@ -46,6 +48,27 @@ function getErrorMessage(payload: unknown): string {
 
     return "Appointment request failed";
 }
+async function getJson<TResponse>(
+    url: string,
+): Promise<TResponse> {
+    const response = await fetch(url, {
+        method: "GET",
+        credentials: "same-origin",
+        cache: "no-store",
+    });
+
+    const payload = await parseResponse(response);
+
+    if (!response.ok) {
+        throw new AppointmentApiError(
+            getErrorMessage(payload),
+            response.status,
+            payload,
+        );
+    }
+
+    return payload as TResponse;
+}
 
 async function postJson<TResponse, TRequest>(
     url: string,
@@ -80,4 +103,38 @@ export function useCreateAppointment() {
         string,
         PatientAppointmentRequest
     >("/api/appointments", postJson);
+}
+export type PatientAppointmentsQuery = {
+    page?: number;
+    size?: number;
+    sort?: string;
+};
+
+export function usePatientAppointments(
+    query: PatientAppointmentsQuery = {},
+) {
+    const searchParams = new URLSearchParams();
+
+    if (query.page !== undefined) {
+        searchParams.set("page", String(query.page));
+    }
+
+    if (query.size !== undefined) {
+        searchParams.set("size", String(query.size));
+    }
+
+    if (query.sort?.trim()) {
+        searchParams.set("sort", query.sort.trim());
+    }
+
+    const queryString = searchParams.toString();
+
+    const url = queryString
+        ? `/api/appointments/mine?${queryString}`
+        : "/api/appointments/mine";
+
+    return useSWR<
+        PageResponse<AppointmentResponse>,
+        AppointmentApiError
+    >(url, getJson);
 }
