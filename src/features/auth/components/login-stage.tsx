@@ -10,7 +10,7 @@ import type { LoginResponse } from "@/types/auth";
 
 type LoginStageProps = {
   fin: string;
-  onSuccess: (result: LoginResponse) => void;
+  onSuccess: (result: LoginResponse) => Promise<void>;
 };
 
 export function LoginStage({ fin, onSuccess }: LoginStageProps) {
@@ -34,7 +34,7 @@ export function LoginStage({ fin, onSuccess }: LoginStageProps) {
         password,
       });
 
-      onSuccess(result);
+      await onSuccess(result);
     } catch (error) {
       setServerError(error instanceof Error ? error.message : "Login failed");
     }
@@ -71,7 +71,7 @@ export function LoginStage({ fin, onSuccess }: LoginStageProps) {
       {serverError && <p role="alert">{serverError}</p>}
 
       <button type="submit" disabled={login.isMutating}>
-        {login.isMutating ? "Giriş edilir..." : "Daxil ol"}
+        {login.isMutating ? "Signing in..." : "Sign in"}
       </button>
     </form>
   );

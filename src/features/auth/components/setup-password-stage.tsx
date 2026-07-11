@@ -13,7 +13,7 @@ import type { LoginResponse } from "@/types/auth";
 
 type SetupPasswordStageProps = {
   fin: string;
-  onSuccess: (result: LoginResponse) => void;
+  onSuccess: (result: LoginResponse) => Promise<void>;
 };
 
 export function SetupPasswordStage({
@@ -55,7 +55,7 @@ export function SetupPasswordStage({
         password,
       });
 
-      onSuccess(loginResult);
+      await onSuccess(loginResult);
     } catch (error) {
       setServerError(
         error instanceof Error ? error.message : "Password setup failed",
