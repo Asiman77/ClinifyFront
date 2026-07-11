@@ -2,14 +2,13 @@
 
 import type { LoginResponse, Role, SelectRoleResponse } from "@/types/auth";
 
-
 function isSafeInternalPath(path: unknown): path is string {
   return (
     typeof path === "string" && path.startsWith("/") && !path.startsWith("//")
   );
 }
 
-async function selectSingleRole(role: Role): Promise<string> {
+export async function selectRole(role: Role): Promise<string> {
   const response = await fetch("/api/auth/select-role", {
     method: "POST",
     headers: {
@@ -42,10 +41,7 @@ export async function completeAuthentication(
   }
 
   if (result.roles.length === 1) {
-    return selectSingleRole(result.roles[0]);
+    return selectRole(result.roles[0]);
   }
-
-  sessionStorage.setItem("clinify_roles", JSON.stringify(result.roles));
-
   return "/select-role";
 }
