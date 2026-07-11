@@ -122,11 +122,13 @@ export function SetupPasswordStage({
       {serverError && <p role="alert">{serverError}</p>}
 
       <button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? "Davam edir..."
-          : passwordCreated
-            ? "Yenidən daxil ol"
-            : "Şifrəni yarat"}
+        {
+          isSubmitting
+            ? "Processing..."
+            : passwordCreated
+              ? "Log in again"
+              : "Create password"
+        }
       </button>
     </form>
   );
