@@ -25,15 +25,6 @@ export async function POST(request: Request) {
       fin: data.fin,
       roles: data.roles,
     });
-
-    response.cookies.set("clinify_roles", JSON.stringify(data.roles), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60,
-    });
-
     response.cookies.delete("clinify_role");
 
     for (const cookie of setCookies) {
