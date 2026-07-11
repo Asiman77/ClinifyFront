@@ -88,3 +88,15 @@ export function useDoctors(query: DoctorsQuery = {}) {
 
     return useSWR<PageResponse<DoctorProfile>>(url, getJson);
 }
+export function useDoctor(
+    doctorId: number | null | undefined,
+) {
+    const url =
+        doctorId !== null &&
+            doctorId !== undefined &&
+            doctorId > 0
+            ? `/api/doctors/${doctorId}`
+            : null;
+
+    return useSWR<DoctorProfile>(url, getJson);
+}
