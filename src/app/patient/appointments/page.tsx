@@ -53,7 +53,7 @@ export default function PatientAppointmentsPage() {
     }
 
     return (
-        <main>
+        <div>
             <header>
                 <h1>My appointments</h1>
 
@@ -167,7 +167,7 @@ export default function PatientAppointmentsPage() {
                     </article>
                 );
             })}
-            
+
             {cancellationError && (
                 <p role="alert">{cancellationError}</p>
             )}
@@ -203,7 +203,7 @@ export default function PatientAppointmentsPage() {
                         </button>
                     </nav>
                 )}
-        </main>
+        </div>
     );
 }
 

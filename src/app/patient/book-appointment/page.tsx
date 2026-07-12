@@ -122,7 +122,7 @@ export default function BookAppointmentPage() {
         }
     }
     return (
-        <main>
+        <div>
             <header>
                 <h1>Book an appointment</h1>
             </header>
@@ -309,7 +309,7 @@ export default function BookAppointmentPage() {
                     <p>Status: {createdAppointment.status}</p>
                 </section>
             )}
-        </main>
+        </div>
     );
 }
 
