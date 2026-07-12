@@ -157,27 +157,27 @@ export default function BookAppointmentPage() {
                     onDateChange={handleDateChange}
                     onSlotSelect={handleSlotSelection}
                     onChangeDoctor={handleChangeDoctor}
-                />
-            )}
-            {selectedSlot && (
-                <BookingConfirmation
-                    date={date}
-                    slot={selectedSlot}
-                    reason={reason}
-                    isSubmitting={createAppointment.isMutating}
-                    errorMessage={bookingError ?? undefined}
-                    onReasonChange={setReason}
-                    onConfirm={handleAppointmentCreation}
+                    confirmation={
+                        selectedSlot ? (
+                            <BookingConfirmation
+                                date={date}
+                                slot={selectedSlot}
+                                reason={reason}
+                                isSubmitting={createAppointment.isMutating}
+                                errorMessage={bookingError ?? undefined}
+                                onReasonChange={setReason}
+                                onConfirm={handleAppointmentCreation}
+                            />
+                        ) : createdAppointment ? (
+                            <BookingSuccess appointment={createdAppointment} />
+                        ) : undefined
+                    }
                 />
             )}
             {bookingError && !selectedSlot && (
                 <p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
                     {bookingError}
                 </p>
-            )}
-
-            {createdAppointment && (
-                <BookingSuccess appointment={createdAppointment} />
             )}
         </div>
     );

@@ -37,44 +37,27 @@ export function BookingConfirmation({
     return (
         <section
             aria-labelledby="booking-confirmation-title"
-            className="flex flex-col gap-5 rounded-lg border p-4"
+            className="flex flex-col gap-4 border-t pt-4"
         >
-            <header className="flex items-start justify-between gap-4">
-                <div>
-                    <h2
+            <header className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                    <h3
                         id="booking-confirmation-title"
-                        className="text-base font-semibold"
+                        className="text-sm font-medium"
                     >
-                        Review appointment
-                    </h2>
+                        Confirm appointment
+                    </h3>
 
-                    <p className="mt-1 text-sm text-muted-foreground">
-                        Confirm the selected date and time.
+                    <p className="mt-1 truncate text-sm text-muted-foreground">
+                        {formatDisplayDate(date)} /{" "}
+                        <span className="tabular-nums">
+                            {startTime} - {endTime}
+                        </span>
                     </p>
                 </div>
 
                 <Badge variant="secondary">Online</Badge>
             </header>
-
-            <dl className="grid gap-4 border-y py-4 sm:grid-cols-2">
-                <div>
-                    <dt className="text-xs text-muted-foreground">
-                        Date
-                    </dt>
-                    <dd className="mt-1 text-sm font-medium">
-                        {formatDisplayDate(date)}
-                    </dd>
-                </div>
-
-                <div>
-                    <dt className="text-xs text-muted-foreground">
-                        Time
-                    </dt>
-                    <dd className="mt-1 text-sm font-medium tabular-nums">
-                        {startTime} - {endTime}
-                    </dd>
-                </div>
-            </dl>
 
             <Field>
                 <FieldLabel htmlFor="appointment-reason">
@@ -87,16 +70,14 @@ export function BookingConfirmation({
                     maxLength={1000}
                     disabled={isSubmitting}
                     placeholder="Add a short reason for your visit"
-                    className="min-h-24 resize-y"
+                    className="min-h-20 resize-y"
                     onChange={(event) =>
                         onReasonChange(event.target.value)
                     }
                 />
 
                 <div className="flex justify-between gap-4">
-                    <FieldDescription>
-                        Optional
-                    </FieldDescription>
+                    <FieldDescription>Optional</FieldDescription>
 
                     <span className="text-xs text-muted-foreground">
                         {reason.length}/1000
@@ -108,14 +89,20 @@ export function BookingConfirmation({
                 <FieldError>{errorMessage}</FieldError>
             )}
 
-            <div className="flex justify-end">
-                <Button type="button" disabled={isSubmitting} className="w-full sm:w-auto" onClick={onConfirm}>
-                    {isSubmitting && (
-                        <Spinner data-icon="inline-start" />
-                    )}
-                    {isSubmitting ? "Booking..." : "Confirm appointment"}
-                </Button>
-            </div>
+            <Button
+                type="button"
+                disabled={isSubmitting}
+                className="w-full"
+                onClick={onConfirm}
+            >
+                {isSubmitting && (
+                    <Spinner data-icon="inline-start" />
+                )}
+
+                {isSubmitting
+                    ? "Booking..."
+                    : `Confirm ${startTime} - ${endTime}`}
+            </Button>
         </section>
     );
 }

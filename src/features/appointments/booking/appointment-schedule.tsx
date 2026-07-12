@@ -6,11 +6,13 @@ import { Field, FieldTitle, } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
 import type { DoctorProfile } from "@/types/doctor";
 import type { AvailableSlot } from "@/types/slot";
+import { ReactNode } from "react";
 
 type AppointmentScheduleProps = {
     doctor: DoctorProfile;
     date: string;
     slots: AvailableSlot[];
+    confirmation?: ReactNode;
     selectedSlot: AvailableSlot | null;
     slotsLoading: boolean;
     slotsError?: string;
@@ -26,6 +28,7 @@ export function AppointmentSchedule({
     selectedSlot,
     slotsLoading,
     slotsError,
+    confirmation,
     onDateChange,
     onSlotSelect,
     onChangeDoctor,
@@ -127,6 +130,7 @@ export function AppointmentSchedule({
                             </div>
                         )}
                     </Field>
+                    {confirmation}
                 </div>
             </div>
         </section>
