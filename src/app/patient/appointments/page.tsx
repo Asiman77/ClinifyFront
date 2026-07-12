@@ -3,22 +3,54 @@
 import { useState } from "react";
 import Link from "next/link";
 
-import { usePatientAppointments } from "@/features/appointments/api";
+import { useCancelAppointment, usePatientAppointments } from "@/features/appointments/api";
 
 const PAGE_SIZE = 10;
 
 export default function PatientAppointmentsPage() {
     const [page, setPage] = useState(0);
 
+    const [pendingCancellationId, setPendingCancellationId] =
+        useState<number | null>(null);
+
+    const [cancellingId, setCancellingId] =
+        useState<number | null>(null);
+
+    const [cancellationError, setCancellationError] =
+        useState<string | null>(null);
+
+    const cancelAppointment = useCancelAppointment();
+
     const {
         data: appointments,
         error,
         isLoading,
+        mutate: refreshAppointments,
     } = usePatientAppointments({
         page,
         size: PAGE_SIZE,
         sort: "startTime,desc",
     });
+
+    async function handleCancellation(appointmentId: number,) {
+        setCancellationError(null);
+        setCancellingId(appointmentId);
+        try {
+            await cancelAppointment.trigger({
+                appointmentId,
+            });
+            setPendingCancellationId(null);
+            await refreshAppointments();
+        } catch (error) {
+            setCancellationError(
+                error instanceof Error
+                    ? error.message
+                    : "Appointment could not be cancelled",
+            );
+        } finally {
+            setCancellingId(null);
+        }
+    }
 
     return (
         <main>
@@ -38,56 +70,107 @@ export default function PatientAppointmentsPage() {
                 <p role="alert">{error.message}</p>
             )}
 
-            {appointments &&
-                appointments.content.length === 0 && (
-                    <section>
-                        <h2>No appointments found</h2>
+            {appointments && appointments.content.length === 0 && (
+                <section>
+                    <h2>No appointments found</h2>
 
-                        <Link href="/patient/book-appointment">
-                            Book your first appointment
-                        </Link>
-                    </section>
-                )}
+                    <Link href="/patient/book-appointment">
+                        Book your first appointment
+                    </Link>
+                </section>
+            )}
 
-            {appointments?.content.map((appointment) => (
-                <article key={appointment.id}>
-                    <header>
-                        <h2>{appointment.doctorFullName}</h2>
-                        <p>{appointment.status}</p>
-                    </header>
-
-                    <dl>
-                        <div>
-                            <dt>Date and time</dt>
-                            <dd>{formatDateTime(appointment.startTime)}</dd>
-                        </div>
-
-                        <div>
-                            <dt>Appointment type</dt>
-                            <dd>
-                                {appointment.type === "ONLINE"
-                                    ? "Online"
-                                    : "Walk in"}
-                            </dd>
-                        </div>
-
-                        <div>
-                            <dt>Duration</dt>
-                            <dd>
-                                {formatTime(appointment.startTime)} -{" "}
-                                {formatTime(appointment.endTime)}
-                            </dd>
-                        </div>
-
-                        {appointment.reason && (
+            {appointments?.content.map((appointment) => {
+                const canCancel = (appointment.status === "REQUESTED" || appointment.status === "APPROVED") && new Date(appointment.startTime) > new Date();
+                const isPending = pendingCancellationId === appointment.id;
+                const isCancelling = cancellingId === appointment.id;
+                return (
+                    <article key={appointment.id}>
+                        <header>
+                            <h2>{appointment.doctorFullName}</h2>
+                            <p>{appointment.status}</p>
+                        </header>
+                        <dl>
                             <div>
-                                <dt>Reason</dt>
-                                <dd>{appointment.reason}</dd>
+                                <dt>Date and time</dt>
+                                <dd>{formatDateTime(appointment.startTime)}</dd>
+                            </div>
+
+                            <div>
+                                <dt>Appointment type</dt>
+                                <dd>
+                                    {appointment.type === "ONLINE"
+                                        ? "Online"
+                                        : "Walk in"}
+                                </dd>
+                            </div>
+
+                            <div>
+                                <dt>Duration</dt>
+                                <dd>
+                                    {formatTime(appointment.startTime)} -{" "}
+                                    {formatTime(appointment.endTime)}
+                                </dd>
+                            </div>
+
+                            {appointment.reason && (
+                                <div>
+                                    <dt>Reason</dt>
+                                    <dd>{appointment.reason}</dd>
+                                </div>
+                            )}
+                        </dl>
+
+                        {canCancel && !isPending && (
+                            <button
+                                type="button"
+                                disabled={cancelAppointment.isMutating}
+                                onClick={() => {
+                                    setCancellationError(null);
+                                    setPendingCancellationId(appointment.id);
+                                }}
+                            >
+                                Cancel appointment
+                            </button>
+                        )}
+
+                        {canCancel && isPending && (
+                            <div>
+                                <p>
+                                    Are you sure you want to cancel this
+                                    appointment?
+                                </p>
+
+                                <button
+                                    type="button"
+                                    disabled={isCancelling}
+                                    onClick={() =>
+                                        handleCancellation(appointment.id)
+                                    }
+                                >
+                                    {isCancelling
+                                        ? "Cancelling..."
+                                        : "Confirm cancellation"}
+                                </button>
+
+                                <button
+                                    type="button"
+                                    disabled={isCancelling}
+                                    onClick={() =>
+                                        setPendingCancellationId(null)
+                                    }
+                                >
+                                    Keep appointment
+                                </button>
                             </div>
                         )}
-                    </dl>
-                </article>
-            ))}
+                    </article>
+                );
+            })}
+            
+            {cancellationError && (
+                <p role="alert">{cancellationError}</p>
+            )}
 
             {appointments &&
                 appointments.totalPages > 1 && (
