@@ -2,23 +2,35 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import {
+    ArrowLeft01Icon,
+    ArrowRight01Icon,
+    Calendar03Icon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
-import { useCancelAppointment, usePatientAppointments } from "@/features/appointments/api";
+import { Button } from "@/components/ui/button";
+import {
+    Empty,
+    EmptyContent,
+    EmptyDescription,
+    EmptyHeader,
+    EmptyMedia,
+    EmptyTitle,
+} from "@/components/ui/empty";
+import { Spinner } from "@/components/ui/spinner";
+import {
+    useCancelAppointment,
+    usePatientAppointments,
+} from "@/features/appointments/api";
+import { CancelAppointmentDialog } from "@/features/appointments/components/cancel-appointment-dialog";
+import { PatientAppointmentRow } from "@/features/appointments/components/patient-appointment-row";
+import type { AppointmentResponse } from "@/types/appointment";
 
 const PAGE_SIZE = 10;
 
 export default function PatientAppointmentsPage() {
     const [page, setPage] = useState(0);
-
-    const [pendingCancellationId, setPendingCancellationId] =
-        useState<number | null>(null);
-
-    const [cancellingId, setCancellingId] =
-        useState<number | null>(null);
-
-    const [cancellationError, setCancellationError] =
-        useState<string | null>(null);
-
     const cancelAppointment = useCancelAppointment();
 
     const {
@@ -32,194 +44,226 @@ export default function PatientAppointmentsPage() {
         sort: "startTime,desc",
     });
 
-    async function handleCancellation(appointmentId: number,) {
-        setCancellationError(null);
-        setCancellingId(appointmentId);
+    const currentAppointments = appointments?.content ?? [];
+
+    const upcomingAppointments = currentAppointments
+        .filter(isOpenAppointment)
+        .sort((first, second) =>
+            first.startTime.localeCompare(second.startTime),
+        );
+
+    const pastAndClosedAppointments = currentAppointments
+        .filter((appointment) => !isOpenAppointment(appointment))
+        .sort((first, second) =>
+            second.startTime.localeCompare(first.startTime),
+        );
+
+    async function handleCancellation(
+        appointmentId: number,
+    ): Promise<string | null> {
         try {
             await cancelAppointment.trigger({
                 appointmentId,
             });
-            setPendingCancellationId(null);
+
             await refreshAppointments();
+
+            return null;
         } catch (error) {
-            setCancellationError(
-                error instanceof Error
-                    ? error.message
-                    : "Appointment could not be cancelled",
-            );
-        } finally {
-            setCancellingId(null);
+            return error instanceof Error
+                ? error.message
+                : "Appointment could not be cancelled";
         }
     }
 
+    function renderAppointment(
+        appointment: AppointmentResponse,
+    ) {
+        const canCancel = isOpenAppointment(appointment);
+
+        return (
+            <PatientAppointmentRow
+                key={appointment.id}
+                appointment={appointment}
+                actions={
+                    canCancel ? (
+                        <CancelAppointmentDialog
+                            appointmentId={appointment.id}
+                            doctorName={appointment.doctorFullName}
+                            isCancelling={
+                                cancelAppointment.isMutating
+                            }
+                            onConfirm={handleCancellation}
+                        />
+                    ) : undefined
+                }
+            />
+        );
+    }
+
+    const showInitialLoading = isLoading && !appointments;
+
     return (
-        <div>
-            <header>
-                <h1>My appointments</h1>
+        <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
+            <h1 className="text-xl font-semibold">
+                My appointments
+            </h1>
 
-                <Link href="/patient/book-appointment">
-                    Book an appointment
-                </Link>
-            </header>
-
-            {isLoading && (
-                <p role="status">Loading appointments...</p>
+            {showInitialLoading && (
+                <div
+                    role="status"
+                    className="flex min-h-48 items-center justify-center gap-2 text-sm text-muted-foreground"
+                >
+                    <Spinner className="size-5" />
+                    <span>Loading appointments...</span>
+                </div>
             )}
 
-            {error && (
-                <p role="alert">{error.message}</p>
+            {!showInitialLoading && error && (
+                <div
+                    role="alert"
+                    className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3"
+                >
+                    <p className="text-sm font-medium text-destructive">
+                        Appointments could not be loaded
+                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                        {error.message}
+                    </p>
+                </div>
             )}
 
-            {appointments && appointments.content.length === 0 && (
-                <section>
-                    <h2>No appointments found</h2>
+            {!showInitialLoading &&
+                !error &&
+                appointments &&
+                currentAppointments.length === 0 && (
+                    <Empty className="min-h-64">
+                        <EmptyHeader>
+                            <EmptyMedia variant="icon">
+                                <HugeiconsIcon
+                                    icon={Calendar03Icon}
+                                    strokeWidth={2}
+                                />
+                            </EmptyMedia>
 
-                    <Link href="/patient/book-appointment">
-                        Book your first appointment
-                    </Link>
+                            <EmptyTitle>
+                                No appointments found
+                            </EmptyTitle>
+
+                            <EmptyDescription>
+                                You have not booked any appointments
+                                yet.
+                            </EmptyDescription>
+                        </EmptyHeader>
+
+                        <EmptyContent>
+                            <Button
+                                render={
+                                    <Link href="/patient/book-appointment" />
+                                }
+                                nativeButton={false}
+                                size="sm"
+                            >
+                                Book an appointment
+                            </Button>
+                        </EmptyContent>
+                    </Empty>
+                )}
+
+            {!error && upcomingAppointments.length > 0 && (
+                <section aria-labelledby="upcoming-appointments-title">
+                    <h2
+                        id="upcoming-appointments-title"
+                        className="text-xs font-medium uppercase text-muted-foreground"
+                    >
+                        Upcoming
+                    </h2>
+
+                    <ul className="mt-1 divide-y">
+                        {upcomingAppointments.map(renderAppointment)}
+                    </ul>
                 </section>
             )}
 
-            {appointments?.content.map((appointment) => {
-                const canCancel = (appointment.status === "REQUESTED" || appointment.status === "APPROVED") && new Date(appointment.startTime) > new Date();
-                const isPending = pendingCancellationId === appointment.id;
-                const isCancelling = cancellingId === appointment.id;
-                return (
-                    <article key={appointment.id}>
-                        <header>
-                            <h2>{appointment.doctorFullName}</h2>
-                            <p>{appointment.status}</p>
-                        </header>
-                        <dl>
-                            <div>
-                                <dt>Date and time</dt>
-                                <dd>{formatDateTime(appointment.startTime)}</dd>
-                            </div>
+            {!error &&
+                pastAndClosedAppointments.length > 0 && (
+                    <section aria-labelledby="past-appointments-title">
+                        <h2
+                            id="past-appointments-title"
+                            className="text-xs font-medium uppercase text-muted-foreground"
+                        >
+                            Past and closed
+                        </h2>
 
-                            <div>
-                                <dt>Appointment type</dt>
-                                <dd>
-                                    {appointment.type === "ONLINE"
-                                        ? "Online"
-                                        : "Walk in"}
-                                </dd>
-                            </div>
-
-                            <div>
-                                <dt>Duration</dt>
-                                <dd>
-                                    {formatTime(appointment.startTime)} -{" "}
-                                    {formatTime(appointment.endTime)}
-                                </dd>
-                            </div>
-
-                            {appointment.reason && (
-                                <div>
-                                    <dt>Reason</dt>
-                                    <dd>{appointment.reason}</dd>
-                                </div>
+                        <ul className="mt-1 divide-y">
+                            {pastAndClosedAppointments.map(
+                                renderAppointment,
                             )}
-                        </dl>
+                        </ul>
+                    </section>
+                )}
 
-                        {canCancel && !isPending && (
-                            <button
-                                type="button"
-                                disabled={cancelAppointment.isMutating}
-                                onClick={() => {
-                                    setCancellationError(null);
-                                    setPendingCancellationId(appointment.id);
-                                }}
-                            >
-                                Cancel appointment
-                            </button>
-                        )}
-
-                        {canCancel && isPending && (
-                            <div>
-                                <p>
-                                    Are you sure you want to cancel this
-                                    appointment?
-                                </p>
-
-                                <button
-                                    type="button"
-                                    disabled={isCancelling}
-                                    onClick={() =>
-                                        handleCancellation(appointment.id)
-                                    }
-                                >
-                                    {isCancelling
-                                        ? "Cancelling..."
-                                        : "Confirm cancellation"}
-                                </button>
-
-                                <button
-                                    type="button"
-                                    disabled={isCancelling}
-                                    onClick={() =>
-                                        setPendingCancellationId(null)
-                                    }
-                                >
-                                    Keep appointment
-                                </button>
-                            </div>
-                        )}
-                    </article>
-                );
-            })}
-
-            {cancellationError && (
-                <p role="alert">{cancellationError}</p>
-            )}
-
-            {appointments &&
+            {!error &&
+                appointments &&
                 appointments.totalPages > 1 && (
-                    <nav aria-label="Appointments pagination">
-                        <button
+                    <nav
+                        aria-label="Appointments pagination"
+                        className="flex items-center justify-between gap-3 border-t pt-4"
+                    >
+                        <Button
                             type="button"
-                            disabled={appointments.first || isLoading}
+                            variant="outline"
+                            size="sm"
+                            disabled={
+                                appointments.first || isLoading
+                            }
                             onClick={() =>
                                 setPage((currentPage) =>
                                     Math.max(0, currentPage - 1),
                                 )
                             }
                         >
+                            <HugeiconsIcon
+                                icon={ArrowLeft01Icon}
+                                strokeWidth={2}
+                                data-icon="inline-start"
+                            />
                             Previous
-                        </button>
+                        </Button>
 
-                        <span>
+                        <span className="text-xs text-muted-foreground">
                             Page {appointments.number + 1} of{" "}
                             {appointments.totalPages}
                         </span>
 
-                        <button
-                            type="button"
-                            disabled={appointments.last || isLoading}
+                        <Button type="button" variant="outline" size="sm"
+                            disabled={
+                                appointments.last || isLoading
+                            }
                             onClick={() =>
-                                setPage((currentPage) => currentPage + 1)
+                                setPage(
+                                    (currentPage) => currentPage + 1,
+                                )
                             }
                         >
                             Next
-                        </button>
+                            <HugeiconsIcon
+                                icon={ArrowRight01Icon}
+                                strokeWidth={2}
+                                data-icon="inline-end"
+                            />
+                        </Button>
                     </nav>
                 )}
         </div>
     );
 }
 
-function formatDateTime(dateTime: string): string {
-    return new Date(dateTime).toLocaleString([], {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-    });
-}
-
-function formatTime(dateTime: string): string {
-    return new Date(dateTime).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-    });
+function isOpenAppointment(
+    appointment: AppointmentResponse,
+): boolean {
+    return (
+        appointment.status === "REQUESTED" ||
+        appointment.status === "APPROVED"
+    );
 }
