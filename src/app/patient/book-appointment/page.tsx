@@ -7,6 +7,7 @@ import { AppointmentResponse } from "@/types/appointment";
 import { AppointmentApiError, useCreateAppointment } from "@/features/appointments/api";
 import { DoctorSelection } from "@/features/appointments/booking/doctor-selection";
 import { AppointmentSchedule } from "@/features/appointments/booking/appointment-schedule";
+import { BookingConfirmation } from "@/features/appointments/booking/booking-confirmation";
 
 const PAGE_SIZE = 10;
 const SLOT_PAGE_SIZE = 50;
@@ -57,6 +58,8 @@ export default function BookAppointmentPage() {
         setDate("");
         setSelectedSlot(null);
         setBookingError(null);
+        setReason("");
+        setCreatedAppointment(null);
     }
 
     function handleDoctorSelection(id: number) {
@@ -67,6 +70,8 @@ export default function BookAppointmentPage() {
         setDate("");
         setSelectedSlot(null);
         setBookingError(null);
+        setReason("");
+        setCreatedAppointment(null);
     }
 
     function handleDateChange(value: string) {
@@ -86,6 +91,7 @@ export default function BookAppointmentPage() {
         setSelectedSlot(null);
         setBookingError(null);
         setCreatedAppointment(null);
+        setReason("");
     }
     async function handleAppointmentCreation() {
         if (!doctorId || !selectedSlot) {
@@ -153,40 +159,21 @@ export default function BookAppointmentPage() {
                 />
             )}
             {selectedSlot && (
-                <section aria-labelledby="selection-title">
-                    <h2 id="selection-title">Selected appointment</h2>
-
-                    <p>Date: {date}</p>
-                    <p>Type: Online</p>
-                    <p>
-                        Time: {formatTime(selectedSlot.startTime)} -{" "}
-                        {formatTime(selectedSlot.endTime)}
-                    </p>
-                    <label htmlFor="appointment-reason">
-                        Reason
-                    </label>
-                    <textarea
-                        id="appointment-reason"
-                        value={reason}
-                        maxLength={1000}
-                        disabled={createAppointment.isMutating}
-                        onChange={(event) => setReason(event.target.value)}
-                    />
-                    <button
-                        type="button"
-                        disabled={createAppointment.isMutating}
-                        onClick={handleAppointmentCreation}
-                    >
-                        {createAppointment.isMutating
-                            ? "Booking..."
-                            : "Confirm appointment"}
-                    </button>
-                </section>
+                <BookingConfirmation
+                    date={date}
+                    slot={selectedSlot}
+                    reason={reason}
+                    isSubmitting={createAppointment.isMutating}
+                    errorMessage={bookingError ?? undefined}
+                    onReasonChange={setReason}
+                    onConfirm={handleAppointmentCreation}
+                />
             )}
-            {bookingError && (
-                <p role="alert">{bookingError}</p>
+            {bookingError && !selectedSlot && (
+                <p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+                    {bookingError}
+                </p>
             )}
-
             {createdAppointment && (
                 <section aria-labelledby="booking-success-title">
                     <h2 id="booking-success-title">
