@@ -3,7 +3,7 @@
 import useSWRMutation from "swr/mutation";
 
 import type { AppointmentResponse, PatientAppointmentRequest, } from "@/types/appointment";
-import { PageResponse } from "@/types/pagination";
+import type { PageResponse } from "@/types/pagination";
 import useSWR from "swr";
 
 export class AppointmentApiError extends Error {
@@ -138,6 +138,32 @@ export function usePatientAppointments(
         AppointmentApiError
     >(url, getJson);
 }
+
+export type PatientDashboardAppointments = {
+    appointments: AppointmentResponse[];
+    currentDateTime: string;
+};
+
+async function getPatientDashboardAppointments(
+    url: string,
+): Promise<PatientDashboardAppointments> {
+    const page = await getJson<
+        PageResponse<AppointmentResponse>
+    >(url);
+
+    return {
+        appointments: page.content,
+        currentDateTime: new Date().toISOString(),
+    };
+}
+
+export function usePatientDashboardAppointments() {
+    return useSWR<PatientDashboardAppointments, AppointmentApiError>(
+        "/api/appointments/mine?page=0&size=100&sort=startTime,desc",
+        getPatientDashboardAppointments,
+    );
+}
+
 export type CancelAppointmentRequest = {
     appointmentId: number;
 };
