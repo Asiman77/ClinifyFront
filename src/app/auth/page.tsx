@@ -1,28 +1,40 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import { AuthForm } from "@/features/auth/auth-form";
 
 export const metadata: Metadata = {
-  title: "Giriş | Clinify",
-  description: "Clinify hesabınıza FIN vasitəsilə daxil olun.",
+  title: "Sign in",
+  description: "Sign in to Clinify with your FIN code.",
 };
 
 export default function AuthPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-12">
-      <section className="w-full max-w-sm" aria-labelledby="auth-title">
-        <header className="mb-8">
-          <h1 id="auth-title" className="text-2xl font-semibold tracking-tight">
-            Sign in to your Clinify account
+    <div className="flex min-h-svh flex-col">
+      <header className="flex items-center justify-between px-6 py-4">
+        <Link href="/" className="text-sm font-semibold tracking-tight">
+          Clinify
+        </Link>
+
+        <ThemeSwitcher />
+      </header>
+
+      <main className="flex flex-1 justify-center px-6 pt-[16svh] pb-12">
+        <div className="w-full max-w-sm">
+          <h1 className="text-xl font-semibold tracking-tight">
+            Sign in to Clinify
           </h1>
 
-          <p className="mt-2 text-sm text-gray-500">
-            Enter your FIN code to continue.
+          <p className="mt-1 text-sm text-muted-foreground">
+            Continue with your FIN code.
           </p>
-        </header>
 
-        <AuthForm />
-      </section>
-    </main>
+          <div className="mt-8">
+            <AuthForm />
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }
