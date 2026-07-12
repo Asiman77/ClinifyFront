@@ -121,32 +121,42 @@ export default function BookAppointmentPage() {
 
             if (error instanceof AppointmentApiError && error.status === 409) {
                 setSelectedSlot(null);
-                await refreshSlots();
             }
         }
     }
+    if (createdAppointment) {
+        return (
+            <div className="mx-auto w-full max-w-3xl">
+                <BookingSuccess appointment={createdAppointment} />
+            </div>
+        );
+    }
     return (
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-            <header>
-                <h1 className="text-xl font-semibold">
-                    Book an appointment
-                </h1>
-            </header>
-            <DoctorSelection
-                departments={departments ?? []}
-                doctors={doctors?.content ?? []}
-                departmentId={departmentId}
-                selectedDoctorId={doctorId}
-                departmentsLoading={departmentsLoading}
-                doctorsLoading={doctorsLoading}
-                errorMessage={
-                    departmentsError?.message ??
-                    doctorsError?.message
-                }
-                onDepartmentChange={handleDepartmentChange}
-                onDoctorSelect={handleDoctorSelection}
-            />
-            {selectedDoctor && (
+            {!selectedDoctor ? (
+                <>
+                    <header>
+                        <h1 className="text-xl font-semibold">
+                            Book an appointment
+                        </h1>
+                    </header>
+
+                    <DoctorSelection
+                        departments={departments ?? []}
+                        doctors={doctors?.content ?? []}
+                        departmentId={departmentId}
+                        selectedDoctorId={doctorId}
+                        departmentsLoading={departmentsLoading}
+                        doctorsLoading={doctorsLoading}
+                        errorMessage={
+                            departmentsError?.message ??
+                            doctorsError?.message
+                        }
+                        onDepartmentChange={handleDepartmentChange}
+                        onDoctorSelect={handleDoctorSelection}
+                    />
+                </>
+            ) : (
                 <AppointmentSchedule
                     doctor={selectedDoctor}
                     date={date}
@@ -168,16 +178,16 @@ export default function BookAppointmentPage() {
                                 onReasonChange={setReason}
                                 onConfirm={handleAppointmentCreation}
                             />
-                        ) : createdAppointment ? (
-                            <BookingSuccess appointment={createdAppointment} />
+                        ) : bookingError ? (
+                            <p
+                                role="alert"
+                                className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive"
+                            >
+                                {bookingError}
+                            </p>
                         ) : undefined
                     }
                 />
-            )}
-            {bookingError && !selectedSlot && (
-                <p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
-                    {bookingError}
-                </p>
             )}
         </div>
     );

@@ -41,7 +41,7 @@ export function AppointmentSchedule({
     const today = startOfToday();
     return (
         <section aria-labelledby="appointment-schedule-title" className="flex flex-col gap-6" >
-            <h2 id="appointment-schedule-title" className="sr-only">
+            <h2 id="appointment-schedule-title" className="text-base font-semibold">
                 Appointment schedule
             </h2>
             <div className="flex items-center gap-3 rounded-lg border bg-muted/50 p-3">
