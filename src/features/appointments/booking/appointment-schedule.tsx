@@ -1,6 +1,5 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
     Field,
@@ -91,13 +90,7 @@ export function AppointmentSchedule({
 
                 <div className="flex flex-col gap-5">
                     <Field>
-                        <FieldTitle>Visit type</FieldTitle>
-                        <Badge variant="secondary">Online</Badge>
-                    </Field>
-
-                    <Field>
                         <FieldTitle>Available slots</FieldTitle>
-
                         {!date ? (
                             <p className="text-sm text-muted-foreground">
                                 Select a date to see available slots.

@@ -6,6 +6,7 @@ import type { AvailableSlot } from "@/types/slot";
 import { AppointmentResponse } from "@/types/appointment";
 import { AppointmentApiError, useCreateAppointment } from "@/features/appointments/api";
 import { DoctorSelection } from "@/features/appointments/booking/doctor-selection";
+import { AppointmentSchedule } from "@/features/appointments/booking/appointment-schedule";
 
 const PAGE_SIZE = 10;
 const SLOT_PAGE_SIZE = 50;
@@ -46,6 +47,9 @@ export default function BookAppointmentPage() {
         page: 0,
         size: SLOT_PAGE_SIZE,
     });
+    const selectedDoctor = doctors?.content.find(
+        (doctor) => doctor.id === doctorId,
+    );
 
     function handleDepartmentChange(value?: number) {
         setDepartmentId(value);
@@ -59,7 +63,6 @@ export default function BookAppointmentPage() {
         if (id === doctorId) {
             return;
         }
-
         setDoctorId(id);
         setDate("");
         setSelectedSlot(null);
@@ -69,18 +72,29 @@ export default function BookAppointmentPage() {
     function handleDateChange(value: string) {
         setDate(value);
         setSelectedSlot(null);
+        setBookingError(null);
+        setCreatedAppointment(null);
     }
-
+    function handleSlotSelection(slot: AvailableSlot) {
+        setSelectedSlot(slot);
+        setBookingError(null);
+        setCreatedAppointment(null);
+    }
+    function handleChangeDoctor() {
+        setDoctorId(undefined);
+        setDate("");
+        setSelectedSlot(null);
+        setBookingError(null);
+        setCreatedAppointment(null);
+    }
     async function handleAppointmentCreation() {
         if (!doctorId || !selectedSlot) {
             return;
         }
-
         setBookingError(null);
         setCreatedAppointment(null);
 
         const normalizedReason = reason.trim();
-
         try {
             const appointment = await createAppointment.trigger({
                 doctorId,
@@ -125,62 +139,19 @@ export default function BookAppointmentPage() {
                 onDepartmentChange={handleDepartmentChange}
                 onDoctorSelect={handleDoctorSelection}
             />
-            {doctorId && (
-                <section aria-labelledby="date-title">
-                    <h2 id="date-title">Choose a date</h2>
-
-                    <label htmlFor="appointment-date">
-                        Appointment date
-                    </label>
-
-                    <input
-                        id="appointment-date"
-                        type="date"
-                        value={date}
-                        onChange={(event) =>
-                            handleDateChange(event.target.value)
-                        }
-                    />
-                </section>
+            {selectedDoctor && (
+                <AppointmentSchedule
+                    doctor={selectedDoctor}
+                    date={date}
+                    slots={slots?.content ?? []}
+                    selectedSlot={selectedSlot}
+                    slotsLoading={slotsLoading}
+                    slotsError={slotsError?.message}
+                    onDateChange={handleDateChange}
+                    onSlotSelect={handleSlotSelection}
+                    onChangeDoctor={handleChangeDoctor}
+                />
             )}
-
-            {doctorId && date && (
-                <section aria-labelledby="slots-title">
-                    <h2 id="slots-title">Available online slots</h2>
-
-                    {slotsLoading && (
-                        <p role="status">Loading available slots...</p>
-                    )}
-
-                    {slotsError && (
-                        <p role="alert">{slotsError.message}</p>
-                    )}
-
-                    {slots && slots.content.length === 0 && (
-                        <p>No slots found for this date.</p>
-                    )}
-
-                    {slots?.content.map((slot) => {
-                        const isSelected =
-                            selectedSlot?.startTime === slot.startTime;
-
-                        return (
-                            <button
-                                key={`${slot.startTime}-${slot.endTime}`}
-                                type="button"
-                                disabled={!slot.available}
-                                aria-pressed={isSelected}
-                                onClick={() => setSelectedSlot(slot)}
-                            >
-                                {formatTime(slot.startTime)} -{" "}
-                                {formatTime(slot.endTime)}
-                                {!slot.available ? " Unavailable" : ""}
-                            </button>
-                        );
-                    })}
-                </section>
-            )}
-
             {selectedSlot && (
                 <section aria-labelledby="selection-title">
                     <h2 id="selection-title">Selected appointment</h2>
