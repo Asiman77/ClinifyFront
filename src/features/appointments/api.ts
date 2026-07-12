@@ -138,3 +138,43 @@ export function usePatientAppointments(
         AppointmentApiError
     >(url, getJson);
 }
+export type CancelAppointmentRequest = {
+    appointmentId: number;
+};
+async function patchCancelAppointment(
+    baseUrl: string,
+    {
+        arg,
+    }: {
+        arg: CancelAppointmentRequest;
+    },
+): Promise<AppointmentResponse> {
+    const response = await fetch(
+        `${baseUrl}/${arg.appointmentId}/cancel`,
+        {
+            method: "PATCH",
+            credentials: "same-origin",
+        },
+    );
+
+    const payload = await parseResponse(response);
+
+    if (!response.ok) {
+        throw new AppointmentApiError(
+            getErrorMessage(payload),
+            response.status,
+            payload,
+        );
+    }
+
+    return payload as AppointmentResponse;
+}
+
+export function useCancelAppointment() {
+    return useSWRMutation<
+        AppointmentResponse,
+        AppointmentApiError,
+        string,
+        CancelAppointmentRequest
+    >("/api/appointments", patchCancelAppointment);
+}
