@@ -8,6 +8,7 @@ import { AppointmentApiError, useCreateAppointment } from "@/features/appointmen
 import { DoctorSelection } from "@/features/appointments/booking/doctor-selection";
 import { AppointmentSchedule } from "@/features/appointments/booking/appointment-schedule";
 import { BookingConfirmation } from "@/features/appointments/booking/booking-confirmation";
+import { BookingSuccess } from "@/features/appointments/booking/booking-success";
 
 const PAGE_SIZE = 10;
 const SLOT_PAGE_SIZE = 50;
@@ -174,28 +175,10 @@ export default function BookAppointmentPage() {
                     {bookingError}
                 </p>
             )}
+
             {createdAppointment && (
-                <section aria-labelledby="booking-success-title">
-                    <h2 id="booking-success-title">
-                        Appointment created
-                    </h2>
-                    <p>
-                        Doctor: {createdAppointment.doctorFullName}
-                    </p>
-                    <p>
-                        Time: {formatTime(createdAppointment.startTime)} -{" "}
-                        {formatTime(createdAppointment.endTime)}
-                    </p>
-                    <p>Status: {createdAppointment.status}</p>
-                </section>
+                <BookingSuccess appointment={createdAppointment} />
             )}
         </div>
     );
-}
-
-function formatTime(dateTime: string): string {
-    return new Date(dateTime).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-    });
 }
