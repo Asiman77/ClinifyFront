@@ -31,7 +31,7 @@ export function AppShell({
         <SidebarProvider>
             <AppSidebar role={role} />
 
-            <SidebarInset>
+            <SidebarInset className="min-w-0">
                 <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80">
                     <SidebarTrigger className="-ml-1" />
                     <Separator
@@ -43,8 +43,7 @@ export function AppShell({
                     </p>
                     <ThemeSwitcher />
                 </header>
-
-                <div className="flex flex-1 flex-col p-4 md:p-6">
+                <div className="flex min-w-0 flex-1 flex-col p-4 md:p-6">
                     {children}
                 </div>
             </SidebarInset>

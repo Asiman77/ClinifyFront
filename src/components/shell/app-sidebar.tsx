@@ -16,6 +16,7 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    useSidebar,
 } from "@/components/ui/sidebar";
 import { Spinner } from "@/components/ui/spinner";
 import { useCurrentUser } from "@/features/auth/api";
@@ -38,6 +39,7 @@ type AppSidebarProps = ComponentProps<typeof Sidebar> & {
 };
 
 function AccountFooter({ role }: { role: Role }) {
+    const { setOpenMobile } = useSidebar();
     const {
         data: user,
         isLoading,
@@ -76,7 +78,10 @@ function AccountFooter({ role }: { role: Role }) {
             <div className="flex shrink-0 items-center">
                 {canSwitchRole && (
                     <Button
-                        render={<Link href="/select-role" />}
+                        render={
+                            <Link href="/select-role"
+                                onClick={() => setOpenMobile(false)} />
+                        }
                         nativeButton={false}
                         variant="ghost"
                         size="icon-sm"
@@ -101,6 +106,7 @@ export function AppSidebar({
 }: AppSidebarProps) {
     const pathname = usePathname();
     const navigation = getNavigationForRole(role);
+    const { setOpenMobile } = useSidebar();
 
     return (
         <Sidebar {...props}>
@@ -131,6 +137,7 @@ export function AppSidebar({
                                                 aria-current={
                                                     isActive ? "page" : undefined
                                                 }
+                                                onClick={() => setOpenMobile(false)}
                                             />
                                         }
                                     >
