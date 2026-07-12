@@ -1,38 +1,22 @@
 # ClinifyFront
-=======
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+Clinify is a healthcare management system designed to streamline communication and workflow between patients and healthcare providers. The platform enables patient registration, doctor profile management, appointment scheduling, medical record management, and laboratory response tracking through a secure RESTful API.
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Team Members
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Asiman Mirzaliyev** — [GitHub](https://github.com/Asiman77) | [LinkedIn](https://www.linkedin.com/in/asiman-dev/)
+- **Revan Abushov** — [GitHub](https://github.com/revandev11) | [LinkedIn](https://www.linkedin.com/in/revanabusov/)
+- **Nuray Taghiyeva** — [GitHub](https://github.com/Nuray745) | [LinkedIn](https://www.linkedin.com/in/nuray-ta%C4%9F%C4%B1yeva-262ab0381/)
+- **Sevinj Guliyeva** — [GitHub](https://github.com/sevinc1003/) | [LinkedIn](https://www.linkedin.com/in/sevinjguliyeva/)
+- **Elchin Guluzada** — [GitHub](https://github.com/Elcinn4013) | [LinkedIn](https://www.linkedin.com/in/elcin-quluzade-b6051b297/)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Project Links
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- [Frontend Repository](https://github.com/Asiman77/ClinifyFront)
+- [Backend Repository](https://github.com/Asiman77/Clinic-Simplify-Clinify)
+- [Live application link]()
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Documentation Guide
