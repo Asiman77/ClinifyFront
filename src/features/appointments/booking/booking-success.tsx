@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Calendar03Icon, CheckmarkCircle02Icon, } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Badge } from "@/components/ui/badge";
+import { AppointmentStatusBadge } from "@/features/appointments/components/appointment-status-badge";
 import { Button } from "@/components/ui/button";
 import type { AppointmentResponse } from "@/types/appointment";
 
@@ -28,9 +28,9 @@ export function BookingSuccess({
                         </p>
                     </div>
                 </div>
-                <Badge variant="secondary">
-                    {formatStatus(appointment.status)}
-                </Badge>
+                <AppointmentStatusBadge
+                    status={appointment.status}
+                />
             </header>
             <dl className="grid gap-4 border-y border-emerald-500/20 py-4 sm:grid-cols-2">
                 <div>
@@ -103,11 +103,4 @@ function formatDate(dateTime: string): string {
         day: "numeric",
         year: "numeric",
     }).format(new Date(year, month - 1, day));
-}
-
-function formatStatus(status: string): string {
-    return status
-        .split("_")
-        .map((word) => word.charAt(0) + word.slice(1).toLowerCase(),)
-        .join(" ");
 }
