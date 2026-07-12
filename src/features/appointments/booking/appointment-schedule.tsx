@@ -1,12 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-    Field,
-    FieldLabel,
-    FieldTitle,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { Calendar } from "@/components/ui/calendar";
+import { Field, FieldTitle, } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
 import type { DoctorProfile } from "@/types/doctor";
 import type { AvailableSlot } from "@/types/slot";
@@ -38,56 +34,52 @@ export function AppointmentSchedule({
         doctor.doctorFirstName.charAt(0) +
         doctor.doctorLastName.charAt(0)
     ).toUpperCase();
-
+    const selectedDate = parseLocalDate(date);
+    const today = startOfToday();
     return (
-        <section
-            aria-labelledby="appointment-schedule-title"
-            className="flex flex-col gap-6"
-        >
+        <section aria-labelledby="appointment-schedule-title" className="flex flex-col gap-6" >
             <h2 id="appointment-schedule-title" className="sr-only">
                 Appointment schedule
             </h2>
-
             <div className="flex items-center gap-3 rounded-lg border bg-muted/50 p-3">
                 <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-background text-xs font-semibold text-muted-foreground">
                     {initials}
                 </span>
-
                 <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">
                         Dr. {doctor.doctorFirstName}{" "}
                         {doctor.doctorLastName}
                     </p>
-
                     <p className="truncate text-sm text-muted-foreground">
                         {doctor.specialization}
                     </p>
-
                     <p className="truncate text-xs text-muted-foreground">
                         {doctor.departmentName}
                     </p>
                 </div>
-
                 <Button type="button" variant="ghost" size="xs" onClick={onChangeDoctor}>
                     Change
                 </Button>
             </div>
-
             <div className="grid items-start gap-6 sm:grid-cols-2">
                 <Field>
-                    <FieldLabel htmlFor="appointment-date">
-                        Appointment date
-                    </FieldLabel>
-                    <Input
-                        id="appointment-date"
-                        type="date"
-                        value={date}
-                        onChange={(event) =>
-                            onDateChange(event.target.value)
-                        }
+                    <FieldTitle>Appointment date</FieldTitle>
+
+                    <Calendar
+                        mode="single"
+                        selected={selectedDate}
+                        defaultMonth={selectedDate ?? today}
+                        today={today}
+                        fixedWeeks
+                        disabled={{ before: today }}
+                        onSelect={(day) => {
+                            if (day) {
+                                onDateChange(formatLocalDate(day));
+                            }
+                        }}
+                        className="rounded-lg border"
                     />
                 </Field>
-
                 <div className="flex flex-col gap-5">
                     <Field>
                         <FieldTitle>Available slots</FieldTitle>
@@ -145,4 +137,38 @@ function formatSlotTime(dateTime: string): string {
     const separatorIndex = dateTime.indexOf("T");
     const time = separatorIndex >= 0 ? dateTime.slice(separatorIndex + 1) : dateTime;
     return time.slice(0, 5);
+}
+function parseLocalDate(value: string): Date | undefined {
+    if (!value) {
+        return undefined;
+    }
+
+    const [
+        yearText = "",
+        monthText = "",
+        dayText = "",
+    ] = value.split("-");
+
+    const year = Number(yearText);
+    const month = Number(monthText);
+    const day = Number(dayText);
+
+    if (!year || !month || !day) {
+        return undefined;
+    }
+
+    return new Date(year, month - 1, day);
+}
+
+function formatLocalDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
+
+function startOfToday(): Date {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
 }
