@@ -9,6 +9,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useLabResponse } from "@/features/lab/api";
 import { LabStatusBadge } from "@/features/lab/components/lab-status-badge";
 import { LabResponseEditor } from "@/features/lab/components/lab-response-editor";
+import { PrintButton } from "@/components/print-button";
 
 export default function LabResponseDetailPage() {
     const params = useParams<{
@@ -30,17 +31,21 @@ export default function LabResponseDetailPage() {
 
     return (
         <div className="mx-auto flex w-full max-w-2xl flex-col gap-7">
-            <Link
-                href="/lab/dashboard"
-                className="inline-flex w-fit items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-                <HugeiconsIcon
-                    icon={ArrowLeft01Icon}
-                    className="size-4"
-                    strokeWidth={2}
-                />
-                Back to laboratory queue
-            </Link>
+            <div className="flex items-center justify-between gap-4 print:hidden">
+                <Link
+                    href="/lab/dashboard"
+                    className="inline-flex w-fit items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                >
+                    <HugeiconsIcon
+                        icon={ArrowLeft01Icon}
+                        className="size-4"
+                        strokeWidth={2}
+                    />
+                    Back to laboratory queue
+                </Link>
+
+                <PrintButton />
+            </div>
 
             {responseId === null && (
                 <div

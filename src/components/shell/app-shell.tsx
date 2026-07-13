@@ -29,10 +29,11 @@ export function AppShell({
 }: AppShellProps) {
     return (
         <SidebarProvider>
-            <AppSidebar role={role} />
+            <AppSidebar role={role}
+                className="print:hidden" />
 
             <SidebarInset className="min-w-0">
-                <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+                <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80 print:hidden">
                     <SidebarTrigger className="-ml-1" />
                     <Separator
                         orientation="vertical"
@@ -43,7 +44,7 @@ export function AppShell({
                     </p>
                     <ThemeSwitcher />
                 </header>
-                <div className="flex min-w-0 flex-1 flex-col p-4 md:p-6">
+                <div className="flex min-w-0 flex-1 flex-col p-4 print:p-0 md:p-6">
                     {children}
                 </div>
             </SidebarInset>
