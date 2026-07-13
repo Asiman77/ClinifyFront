@@ -52,6 +52,11 @@ const NAVIGATION_BY_ROLE = {
 
     LAB_TECHNICIAN: [
         {
+            href: "/lab/dashboard",
+            label: "Dashboard",
+            icon: Home01Icon,
+        },
+        {
             href: "/lab/responses",
             label: "Lab responses",
             icon: TestTube01Icon,

@@ -12,7 +12,6 @@ import { useLabResponses } from "@/features/lab/api";
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, } from "@/components/ui/empty";
 import { Spinner } from "@/components/ui/spinner";
-import { useOpenLabResponses } from "@/features/lab/api";
 import { LabResponseRow } from "@/features/lab/components/lab-response-row";
 
 const PAGE_SIZE = 10;
