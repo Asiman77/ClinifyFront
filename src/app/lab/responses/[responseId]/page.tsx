@@ -8,6 +8,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Spinner } from "@/components/ui/spinner";
 import { useLabResponse } from "@/features/lab/api";
 import { LabStatusBadge } from "@/features/lab/components/lab-status-badge";
+import { LabResponseEditor } from "@/features/lab/components/lab-response-editor";
 
 export default function LabResponseDetailPage() {
     const params = useParams<{
@@ -24,6 +25,7 @@ export default function LabResponseDetailPage() {
         data: response,
         error,
         isLoading,
+        mutate,
     } = useLabResponse(responseId);
 
     return (
@@ -136,6 +138,11 @@ export default function LabResponseDetailPage() {
                             />
                         </dl>
                     </section>
+                    <LabResponseEditor
+                        key={`${response.id}-${response.updatedAt}`}
+                        response={response}
+                        onUpdated={() => mutate()}
+                    />
                 </>
             )}
         </div>
