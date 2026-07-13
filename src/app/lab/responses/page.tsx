@@ -4,7 +4,6 @@ import { useState } from "react";
 import {
     ArrowLeft01Icon,
     ArrowRight01Icon,
-    Refresh01Icon,
     TestTube01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -36,39 +35,13 @@ export default function LabResponsesPage() {
 
     return (
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-            <header className="flex items-start justify-between gap-4">
-                <div>
-                    <h1 className="text-xl font-semibold">
-                        Lab response history
-                    </h1>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                        Review active and completed laboratory responses.
-                    </p>
-                </div>
-
-                <div className="flex shrink-0 items-center gap-2">
-                    {data && (
-                        <span className="text-sm tabular-nums text-muted-foreground">
-                            {data.totalElements} total
-                        </span>
-                    )}
-
-                    <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon-sm"
-                        disabled={isValidating}
-                        aria-label="Refresh laboratory queue"
-                        title="Refresh"
-                        onClick={() => void mutate()}
-                    >
-                        <HugeiconsIcon
-                            icon={Refresh01Icon}
-                            className={isValidating ? "size-4 animate-spin" : "size-4"}
-                            strokeWidth={2}
-                        />
-                    </Button>
-                </div>
+            <header className="flex flex-col gap-1">
+                <h1 className="text-xl font-semibold tracking-tight">
+                    Lab response history
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                    Review active and completed laboratory responses.
+                </p>
             </header>
 
             {showInitialLoading && (
@@ -115,20 +88,14 @@ export default function LabResponsesPage() {
             )}
 
             {!error && responses.length > 0 && (
-                <section aria-labelledby="all-responses-title">
-                    <h2 id="all-responses-title" className="text-xs font-medium uppercase text-muted-foreground">
-                        All responses
-                    </h2>
-
-                    <ul className="mt-1 divide-y">
-                        {responses.map((response) => (
-                            <LabResponseRow
-                                key={response.id}
-                                response={response}
-                            />
-                        ))}
-                    </ul>
-                </section>
+                <ul className="divide-y">
+                    {responses.map((response) => (
+                        <LabResponseRow
+                            key={response.id}
+                            response={response}
+                        />
+                    ))}
+                </ul>
             )}
 
             {!error && data && data.totalPages > 1 && (
