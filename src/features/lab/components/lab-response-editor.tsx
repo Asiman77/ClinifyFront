@@ -134,7 +134,7 @@ export function LabResponseEditor({
     return (
         <section
             aria-labelledby="laboratory-result-title"
-            className="flex flex-col gap-5"
+            className="flex flex-col gap-5 print:hidden"
         >
             <h2 id="laboratory-result-title"
                 className="text-xs font-medium uppercase text-muted-foreground"

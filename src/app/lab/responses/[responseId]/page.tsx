@@ -10,6 +10,7 @@ import { useLabResponse } from "@/features/lab/api";
 import { LabStatusBadge } from "@/features/lab/components/lab-status-badge";
 import { LabResponseEditor } from "@/features/lab/components/lab-response-editor";
 import { PrintButton } from "@/components/print-button";
+import { LabResultPrintView } from "@/features/lab/components/lab-result-print-view";
 
 export default function LabResponseDetailPage() {
     const params = useParams<{
@@ -143,6 +144,7 @@ export default function LabResponseDetailPage() {
                             />
                         </dl>
                     </section>
+                    <LabResultPrintView response={response} />
                     <LabResponseEditor
                         key={`${response.id}-${response.updatedAt}`}
                         response={response}
