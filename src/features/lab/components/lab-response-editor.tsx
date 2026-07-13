@@ -1,16 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { CheckmarkCircle02Icon, PlayCircle02Icon, SaveIcon, } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
-import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
-import { useDeleteLabFile, useUpdateLabResponse, useUpdateLabStatus, useUploadLabFile, } from "@/features/lab/api";
-import { CancelLabResponseDialog } from "./cancel-lab-response-dialog";
+import { useDeleteLabFile, useUpdateLabResponse, useUploadLabFile, } from "@/features/lab/api";
 import { LabResponseFiles } from "./lab-response-files";
 import type { LabResponse, LabResponseDetail, LabStatus, } from "@/types/lab";
+import { LabStatusSelect } from "./lab-status-select";
 type Feedback = {
     type: "success" | "error";
     message: string;
@@ -27,23 +24,24 @@ export function LabResponseEditor({
         useState(response.resultText ?? "");
     const [note, setNote] =
         useState(response.note ?? "");
+    const [status, setStatus] =
+        useState<LabStatus>(response.status);
     const [files, setFiles] =
         useState(response.files);
     const [feedback, setFeedback] =
         useState<Feedback | null>(null);
 
-    const statusMutation = useUpdateLabStatus();
     const updateMutation = useUpdateLabResponse();
     const uploadMutation = useUploadLabFile();
     const deleteMutation = useDeleteLabFile();
 
-    const editable = response.status === "IN_PROGRESS";
     const finalStatus =
         response.status === "COMPLETED" ||
         response.status === "CANCELLED";
 
+    const editable = !finalStatus;
+
     const busy =
-        statusMutation.isMutating ||
         updateMutation.isMutating ||
         uploadMutation.isMutating ||
         deleteMutation.isMutating;
@@ -84,21 +82,7 @@ export function LabResponseEditor({
             return message;
         }
     }
-
-    async function handleStart() {
-        await execute(
-            () =>
-                statusMutation.trigger({
-                    responseId: response.id,
-                    status: "IN_PROGRESS",
-                }),
-            "Laboratory work started",
-        );
-    }
-
-    async function handleSave(
-        status?: LabStatus,
-    ) {
+    async function handleSave() {
         if (status === "COMPLETED" && !canComplete) {
             setFeedback({
                 type: "error",
@@ -115,26 +99,12 @@ export function LabResponseEditor({
                     data: {
                         resultText,
                         note,
-                        ...(status ? { status } : {}),
+                        status,
                     },
                 }),
-            status === "COMPLETED"
-                ? "Laboratory response completed"
-                : "Draft saved",
+            "Laboratory response saved",
         );
     }
-
-    async function handleCancel() {
-        return execute(
-            () =>
-                statusMutation.trigger({
-                    responseId: response.id,
-                    status: "CANCELLED",
-                }),
-            "Laboratory request cancelled",
-        );
-    }
-
     async function handleUpload(file: File) {
         await execute(
             () =>
@@ -187,36 +157,14 @@ export function LabResponseEditor({
                     {feedback.message}
                 </p>
             )}
-
-            {response.status === "PENDING" && (
-                <div className="flex flex-wrap items-center gap-2">
-                    <Button
-                        type="button"
-                        disabled={busy}
-                        onClick={() => void handleStart()}
-                    >
-                        {statusMutation.isMutating ? (
-                            <Spinner data-icon="inline-start" />
-                        ) : (
-                            <HugeiconsIcon
-                                icon={PlayCircle02Icon}
-                                data-icon="inline-start"
-                            />
-                        )}
-                        Start work
-                    </Button>
-
-                    <CancelLabResponseDialog
-                        isCancelling={
-                            statusMutation.isMutating
-                        }
-                        onConfirm={handleCancel}
-                    />
-                </div>
-            )}
-
             {(editable || finalStatus) && (
                 <>
+                    <LabStatusSelect
+                        currentStatus={response.status}
+                        value={status}
+                        disabled={!editable || busy}
+                        onValueChange={setStatus}
+                    />
                     <Field>
                         <FieldLabel htmlFor="lab-result">
                             Result
@@ -259,35 +207,19 @@ export function LabResponseEditor({
             )}
 
             {editable && (
-                <div className="flex flex-wrap items-center gap-2">
-                    <Button type="button" variant="outline" disabled={busy} onClick={() => void handleSave()}>
-                        <HugeiconsIcon icon={SaveIcon} data-icon="inline-start" />
-                        Save draft
-                    </Button>
-
+                <div>
                     <Button
                         type="button"
-                        disabled={busy || !canComplete}
-                        title={
-                            canComplete ? "Complete laboratory response" : "Result text or file is required"
+                        disabled={
+                            busy ||
+                            (status === "COMPLETED" && !canComplete)
                         }
-                        onClick={() => void handleSave("COMPLETED")
-                        }
+                        onClick={() => void handleSave()}
                     >
-                        {updateMutation.isMutating ? (
-                            <Spinner data-icon="inline-start" />
-                        ) : (
-                            <HugeiconsIcon
-                                icon={CheckmarkCircle02Icon}
-                                data-icon="inline-start"
-                            />
-                        )}
-                        Complete
+                        {updateMutation.isMutating
+                            ? "Saving..."
+                            : "Save"}
                     </Button>
-                    <CancelLabResponseDialog
-                        isCancelling={statusMutation.isMutating}
-                        onConfirm={handleCancel}
-                    />
                 </div>
             )}
         </section>
