@@ -10,13 +10,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@/components/ui/empty";
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, } from "@/components/ui/empty";
 import { Spinner } from "@/components/ui/spinner";
 import { useOpenLabResponses } from "@/features/lab/api";
 import { LabResponseRow } from "@/features/lab/components/lab-response-row";
@@ -71,11 +65,7 @@ export default function LabDashboardPage() {
           >
             <HugeiconsIcon
               icon={Refresh01Icon}
-              className={
-                isValidating
-                  ? "size-4 animate-spin"
-                  : "size-4"
-              }
+              className={isValidating ? "size-4 animate-spin" : "size-4"}
               strokeWidth={2}
             />
           </Button>
@@ -106,26 +96,24 @@ export default function LabDashboardPage() {
         </div>
       )}
 
-      {!showInitialLoading &&
-        !error &&
-        responses.length === 0 && (
-          <Empty className="min-h-64">
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <HugeiconsIcon
-                  icon={TestTube01Icon}
-                  strokeWidth={2}
-                />
-              </EmptyMedia>
-              <EmptyTitle>
-                No open laboratory requests
-              </EmptyTitle>
-              <EmptyDescription>
-                New requests will appear here.
-              </EmptyDescription>
-            </EmptyHeader>
-          </Empty>
-        )}
+      {!showInitialLoading && !error && responses.length === 0 && (
+        <Empty className="min-h-64">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <HugeiconsIcon
+                icon={TestTube01Icon}
+                strokeWidth={2}
+              />
+            </EmptyMedia>
+            <EmptyTitle>
+              No open laboratory requests
+            </EmptyTitle>
+            <EmptyDescription>
+              New requests will appear here.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      )}
 
       {!error && responses.length > 0 && (
         <section aria-labelledby="open-requests-title">
@@ -169,11 +157,9 @@ export default function LabDashboardPage() {
             />
             Previous
           </Button>
-
           <span className="text-xs text-muted-foreground">
             Page {data.number + 1} of {data.totalPages}
           </span>
-
           <Button
             type="button"
             variant="outline"
