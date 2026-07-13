@@ -19,4 +19,17 @@ Clinify is a healthcare management system designed to streamline communication a
 
 ---
 
+### Technologies Used
+
+The frontend is built with modern React technologies to provide a fast, responsive, and maintainable user experience.
+
+| Technology | Purpose |
+|------------|---------|
+| React | Builds reusable and interactive user interface components. |
+| Tailwind CSS | Provides utility-first styling for rapid UI development. |
+| TypeScript | Adds static typing for improved code quality and maintainability. |
+| Vercel | Hosts and deploys the frontend application with automated previews and production deployments. |
+
+---
+
 ## Documentation Guide
