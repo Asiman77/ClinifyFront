@@ -4,24 +4,21 @@ import type { LabStatus } from "@/types/lab";
 const STATUS_CONFIG = {
     PENDING: {
         label: "Pending",
-        className: "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-300",
+        className: "border-transparent bg-yellow-500/15 text-yellow-700 dark:text-yellow-400",
     },
     IN_PROGRESS: {
         label: "In progress",
-        className: "border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-900 dark:bg-sky-950 dark:text-sky-300",
+        className: "border-transparent bg-blue-500/15 text-blue-700 dark:text-blue-400",
     },
     COMPLETED: {
         label: "Completed",
-        className: "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-300",
+        className: "border-transparent bg-green-500/15 text-green-700 dark:text-green-400",
     },
     CANCELLED: {
         label: "Cancelled",
-        className: "border-red-200 bg-red-50 text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-300",
+        className: "border-transparent bg-gray-500/15 text-gray-600 dark:text-gray-400",
     },
-} satisfies Record<
-    LabStatus,
-    { label: string; className: string }
->;
+} satisfies Record<LabStatus, { label: string; className: string }>;
 
 export function LabStatusBadge({
     status,

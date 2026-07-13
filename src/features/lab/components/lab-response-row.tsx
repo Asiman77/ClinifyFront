@@ -1,9 +1,4 @@
 import Link from "next/link";
-import {
-    ArrowRight01Icon,
-    TestTube01Icon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 
 import { LabStatusBadge } from "./lab-status-badge";
 import type { LabResponseSummary } from "@/types/lab";
@@ -15,43 +10,33 @@ export function LabResponseRow({
 }) {
     return (
         <li>
-            <Link href={`/lab/responses/${response.id}`} className="group flex flex-col gap-3 py-3 outline-none focus-visible:ring-2 focus-visible:ring-ring sm:flex-row sm:items-center sm:justify-between"
+            <Link
+                href={`/lab/responses/${response.id}`}
+                className="-mx-2 flex flex-col gap-2 rounded-md px-2 py-3 outline-none transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
             >
-                <div className="flex min-w-0 items-center gap-3">
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                        <HugeiconsIcon
-                            icon={TestTube01Icon}
-                            className="size-4"
-                            strokeWidth={2}
-                            aria-hidden="true"
-                        />
-                    </span>
+                <div className="min-w-0">
+                    <p className="truncate text-sm font-medium">
+                        {response.testName}
+                    </p>
 
-                    <div className="min-w-0">
-                        <p className="truncate text-sm font-medium">
-                            {response.testName}
-                        </p>
-                        <p className="truncate text-sm text-muted-foreground">
-                            {response.patientFullName}
-                            {" / "}
-                            {response.doctorFullName}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                            Record #{response.medicalRecordId}
-                            {" / "}
-                            {formatDate(response.createdAt)}
-                        </p>
-                    </div>
+                    <p className="truncate text-sm text-muted-foreground">
+                        {response.patientFullName}
+                        {" \u00b7 "}
+                        {response.doctorFullName}
+                        {" \u00b7 "}
+                        Record #{response.medicalRecordId}
+                    </p>
                 </div>
 
-                <div className="flex items-center gap-2 self-end sm:self-auto">
+                <div className="flex shrink-0 items-center gap-3">
                     <LabStatusBadge status={response.status} />
-                    <HugeiconsIcon
-                        icon={ArrowRight01Icon}
-                        className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5"
-                        strokeWidth={2}
-                        aria-hidden="true"
-                    />
+
+                    <time
+                        dateTime={response.createdAt}
+                        className="text-sm tabular-nums text-muted-foreground"
+                    >
+                        {formatDate(response.createdAt)}
+                    </time>
                 </div>
             </Link>
         </li>
@@ -66,8 +51,6 @@ function formatDate(value: string): string {
     }
 
     return new Intl.DateTimeFormat("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
+        dateStyle: "medium",
     }).format(date);
 }
