@@ -1,10 +1,14 @@
 "use client";
 
 import useSWR from "swr";
+import useSWRMutation from "swr/mutation";
 
 import type {
+    LabResponse,
     LabResponseDetail,
     LabResponseSummary,
+    LabStatus,
+    UpdateLabResponseRequest,
 } from "@/types/lab";
 import type { PageResponse } from "@/types/pagination";
 
@@ -138,4 +142,127 @@ export function useLabResponse(
     const url = responseId === null ? null : `/api/lab-responses/${responseId}`;
 
     return useSWR<LabResponseDetail, LabApiError>(url, labRequest);
+}
+export type UpdateLabResponseArgs = {
+    responseId: number;
+    data: UpdateLabResponseRequest;
+};
+
+async function updateLabResponse(
+    baseUrl: string,
+    { arg }: { arg: UpdateLabResponseArgs },
+) {
+    return labRequest<LabResponse>(
+        `${baseUrl}/${arg.responseId}`,
+        {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(arg.data),
+        },
+    );
+}
+
+export function useUpdateLabResponse() {
+    return useSWRMutation<
+        LabResponse,
+        LabApiError,
+        string,
+        UpdateLabResponseArgs
+    >("/api/lab-responses", updateLabResponse);
+}
+
+export type UpdateLabStatusArgs = {
+    responseId: number;
+    status: LabStatus;
+};
+
+async function updateLabStatus(
+    baseUrl: string,
+    { arg }: { arg: UpdateLabStatusArgs },
+) {
+    return labRequest<LabResponse>(
+        `${baseUrl}/${arg.responseId}/status`,
+        {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                status: arg.status,
+            }),
+        },
+    );
+}
+
+export function useUpdateLabStatus() {
+    return useSWRMutation<
+        LabResponse,
+        LabApiError,
+        string,
+        UpdateLabStatusArgs
+    >("/api/lab-responses", updateLabStatus);
+}
+
+export type UploadLabFileArgs = {
+    responseId: number;
+    file: File;
+};
+
+async function uploadLabFile(
+    baseUrl: string,
+    { arg }: { arg: UploadLabFileArgs },
+) {
+    const formData = new FormData();
+    formData.set("file", arg.file);
+
+    return labRequest<LabResponse>(
+        `${baseUrl}/${arg.responseId}/files`,
+        {
+            method: "POST",
+            body: formData,
+        },
+    );
+}
+
+export function useUploadLabFile() {
+    return useSWRMutation<
+        LabResponse,
+        LabApiError,
+        string,
+        UploadLabFileArgs
+    >("/api/lab-responses", uploadLabFile);
+}
+
+export type DeleteLabFileArgs = {
+    responseId: number;
+    publicId: string;
+};
+
+async function deleteLabFile(
+    baseUrl: string,
+    { arg }: { arg: DeleteLabFileArgs },
+) {
+    return labRequest<LabResponse>(
+        `${baseUrl}/${arg.responseId}/files`,
+        {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                publicId: arg.publicId,
+            }),
+        },
+    );
+}
+
+export function useDeleteLabFile() {
+    return useSWRMutation<
+        LabResponse,
+        LabApiError,
+        string,
+        DeleteLabFileArgs
+    >("/api/lab-responses", deleteLabFile);
 }
