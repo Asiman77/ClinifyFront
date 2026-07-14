@@ -8,6 +8,7 @@ import {
 } from "@/features/auth/roles";
 import { ProblemSection } from "@/features/landing/problem-section";
 import { HowItWorks } from "@/features/landing/how-it-works";
+import { CtaFooter } from "@/features/landing/cta-footer";
 
 async function getDashboardHref(): Promise<string | null> {
   const cookieStore = await cookies();
@@ -36,6 +37,9 @@ export default async function HomePage() {
         <ProblemSection />
         <HowItWorks />
       </main>
+      <footer>
+        <CtaFooter />
+      </footer>
     </>
   );
 }
