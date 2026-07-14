@@ -10,7 +10,7 @@ import {
   useDoctorPatients,
   useDoctorRecords,
 } from "@/features/doctor/records/api";
-import { CreateMedicalRecordSheet } from "@/features/doctor/records/create-medical-record-sheet";
+import { CreateMedicalRecordDialog } from "@/features/doctor/records/create-medical-record-dialog";
 import { DoctorDashboardAnalytics } from "@/features/doctor/dashboard/doctor-dashboard-analytics";
 
 export default function DoctorDashboardPage() {
@@ -74,7 +74,7 @@ export default function DoctorDashboardPage() {
           <DoctorUpcomingPreview
             appointments={upcoming.slice(0, 5)}
             footer={
-              <CreateMedicalRecordSheet
+              <CreateMedicalRecordDialog
                 patients={doctorPatients}
                 triggerLabel="New medical record"
               />

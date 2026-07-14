@@ -22,7 +22,7 @@ import {
     useDoctorPatients,
     useDoctorRecords,
 } from "@/features/doctor/records/api";
-import { CreateMedicalRecordSheet } from "@/features/doctor/records/create-medical-record-sheet";
+import { CreateMedicalRecordDialog } from "@/features/doctor/records/create-medical-record-dialog";
 import { DoctorMedicalRecordRow } from "@/features/doctor/records/doctor-medical-record-row";
 
 const PAGE_SIZE = 10;
@@ -57,7 +57,7 @@ export default function DoctorMedicalRecordsPage() {
                 </h1>
 
                 {patients && (
-                    <CreateMedicalRecordSheet
+                    <CreateMedicalRecordDialog
                         patients={patients}
                         triggerLabel="New record"
                     />
@@ -107,7 +107,7 @@ export default function DoctorMedicalRecordsPage() {
 
                             {patients && (
                                 <EmptyContent>
-                                    <CreateMedicalRecordSheet
+                                    <CreateMedicalRecordDialog
                                         patients={patients}
                                         triggerLabel="New record"
                                     />
@@ -127,7 +127,7 @@ export default function DoctorMedicalRecordsPage() {
                     ))}
                 </ul>
             )}
-            
+
             {!error && records && records.totalPages > 1 && (
                 <nav
                     aria-label="Medical records pagination"
