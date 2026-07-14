@@ -64,6 +64,11 @@ const NAVIGATION_BY_ROLE = {
             label: "Medical records",
             icon: FileAttachmentIcon,
         },
+        {
+            href: "/patient/lab-results",
+            label: "Lab results",
+            icon: TestTube01Icon,
+        },
     ],
 
     LAB_TECHNICIAN: [
