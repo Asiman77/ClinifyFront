@@ -4,56 +4,60 @@ import { z } from "zod";
 import { backendRequest } from "@/lib/api/backend";
 import { createRouteErrorResponse } from "@/lib/api/route-error";
 import type { AppointmentResponse } from "@/types/appointment";
-import type { PageResponse } from "@/types/pagination";
 
-const querySchema = z.object({
-    page: z.coerce.number().int().min(0).optional(),
-    size: z.coerce.number().int().min(1).max(100).optional(),
-    sort: z.string().trim().min(1).optional(),
-});
+const appointmentIdSchema = z.coerce
+    .number()
+    .int("Appointment id must be an integer")
+    .positive("Appointment id must be positive");
 
-export async function GET(request: Request) {
+const actionSchema = z.enum([
+    "approve",
+    "reject",
+    "complete",
+]);
+
+type DoctorAppointmentActionRouteContext = {
+    params: Promise<{
+        appointmentId: string;
+        action: string;
+    }>;
+};
+
+export async function PATCH(
+    request: Request,
+    { params }: DoctorAppointmentActionRouteContext,
+) {
     try {
-        const requestUrl = new URL(request.url);
-        const query = querySchema.parse(
-            Object.fromEntries(requestUrl.searchParams),
+        const routeParams = await params;
+
+        const appointmentId = appointmentIdSchema.parse(
+            routeParams.appointmentId,
         );
-        const searchParams = new URLSearchParams();
+        const action = actionSchema.parse(routeParams.action);
 
-        if (query.page !== undefined) {
-            searchParams.set("page", String(query.page));
-        }
-        if (query.size !== undefined) {
-            searchParams.set("size", String(query.size));
-        }
-        if (query.sort) {
-            searchParams.set("sort", query.sort);
-        }
-
-        const queryString = searchParams.toString();
-        const backendPath = queryString
-            ? `/api/appointments/doctor/mine?${queryString}`
-            : "/api/appointments/doctor/mine";
-
-        const { data, status, setCookies } = await backendRequest<
-            PageResponse<AppointmentResponse>
-        >(backendPath, {
-            method: "GET",
-            headers: {
-                cookie: request.headers.get("cookie") ?? "",
-            },
-            cache: "no-store",
-        });
+        const { data, status, setCookies } =
+            await backendRequest<AppointmentResponse>(
+                `/api/appointments/${appointmentId}/${action}`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        cookie: request.headers.get("cookie") ?? "",
+                    },
+                    cache: "no-store",
+                },
+            );
 
         const response = NextResponse.json(data, { status });
+
         for (const cookie of setCookies) {
             response.headers.append("Set-Cookie", cookie);
         }
+
         return response;
     } catch (error) {
         return createRouteErrorResponse(
             error,
-            "Doctor appointments could not be loaded",
+            "Appointment status could not be updated",
         );
     }
 }
