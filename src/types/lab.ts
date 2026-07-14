@@ -1,4 +1,6 @@
 export const LAB_STATUSES = [
+    "NOT_REQUIRED",
+    "REQUESTED",
     "PENDING",
     "IN_PROGRESS",
     "COMPLETED",

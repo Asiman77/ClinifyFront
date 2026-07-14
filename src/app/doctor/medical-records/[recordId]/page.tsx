@@ -7,7 +7,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 
 import { Spinner } from "@/components/ui/spinner";
 import { useDoctorRecord } from "@/features/doctor/records/api";
-import { MedicalRecordDetail } from "@/features/doctor/records/medical-record-detail";
+import { MedicalRecordDetail } from "@/features/records/medical-record-detail";
 
 export default function DoctorMedicalRecordDetailPage() {
     const params = useParams<{ recordId: string }>();

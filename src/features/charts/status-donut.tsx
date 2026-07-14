@@ -10,6 +10,7 @@ import { DistributionDonut } from "./distribution-donut";
 type AnyStatus = AppointmentStatus | LabStatus;
 
 const STATUS_LABELS: Record<AnyStatus, string> = {
+    NOT_REQUIRED: "NOT REQUIRED",
     REQUESTED: "Requested",
     APPROVED: "Approved",
     REJECTED: "Rejected",

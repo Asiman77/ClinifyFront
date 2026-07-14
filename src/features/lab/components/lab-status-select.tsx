@@ -10,15 +10,31 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import type { LabStatus } from "@/types/lab";
+type EditableLabStatus = Exclude<
+    LabStatus,
+    "NOT_REQUIRED" | "REQUESTED"
+>;
 
-const STATUS_LABELS: Record<LabStatus, string> = {
+function isEditableLabStatus(
+    status: LabStatus,
+): status is EditableLabStatus {
+    return (
+        status !== "NOT_REQUIRED" &&
+        status !== "REQUESTED"
+    );
+}
+
+const STATUS_LABELS: Record<EditableLabStatus, string> = {
     PENDING: "Pending",
     IN_PROGRESS: "In progress",
     COMPLETED: "Completed",
     CANCELLED: "Cancelled",
 };
 
-const AVAILABLE_STATUSES: Record<LabStatus, LabStatus[]> = {
+const AVAILABLE_STATUSES: Record<
+    EditableLabStatus,
+    EditableLabStatus[]
+> = {
     PENDING: ["PENDING", "IN_PROGRESS", "CANCELLED"],
     IN_PROGRESS: ["IN_PROGRESS", "COMPLETED", "CANCELLED"],
     COMPLETED: ["COMPLETED"],
@@ -38,6 +54,12 @@ export function LabStatusSelect({
     disabled = false,
     onValueChange,
 }: LabStatusSelectProps) {
+    if (
+        !isEditableLabStatus(currentStatus) ||
+        !isEditableLabStatus(value)
+    ) {
+        return null;
+    }
     const availableStatuses = AVAILABLE_STATUSES[currentStatus];
 
     const items = Object.fromEntries(
