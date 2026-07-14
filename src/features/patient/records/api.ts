@@ -5,6 +5,7 @@ import useSWR from "swr";
 import type {
     MedicalRecord,
     MedicalRecordSummary,
+    PatientLabResultSummary,
 } from "@/types/medical-record";
 import type { PageResponse } from "@/types/pagination";
 
@@ -121,4 +122,32 @@ export function usePatientMedicalRecord(
         url,
         getJson,
     );
+}
+export function usePatientLabResults(
+    query: PatientRecordsQuery = {},
+) {
+    const searchParams = new URLSearchParams();
+
+    if (query.page !== undefined) {
+        searchParams.set("page", String(query.page));
+    }
+
+    if (query.size !== undefined) {
+        searchParams.set("size", String(query.size));
+    }
+
+    if (query.sort?.trim()) {
+        searchParams.set("sort", query.sort.trim());
+    }
+
+    const queryString = searchParams.toString();
+
+    const url = queryString
+        ? `/api/patient/lab-results?${queryString}`
+        : "/api/patient/lab-results";
+
+    return useSWR<
+        PageResponse<PatientLabResultSummary>,
+        PatientRecordApiError
+    >(url, getJson);
 }

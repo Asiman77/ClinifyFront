@@ -1,5 +1,7 @@
-import type { LabResponse } from "@/types/lab";
-
+import type {
+    LabResponse,
+    LabStatus,
+} from "@/types/lab";
 export type MedicalRecordSummary = {
     id: number;
     diagnosis: string;
@@ -21,4 +23,12 @@ export type MedicalRecord = {
     labResponses: LabResponse[];
     createdAt: string;
     updatedAt: string;
+};
+export type PatientLabResultSummary = {
+    id: number;
+    medicalRecordId: number;
+    diagnosis: string;
+    recordDate: string;
+    testName: string;
+    status: LabStatus;
 };
