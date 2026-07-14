@@ -33,3 +33,4 @@ The frontend is built with modern React technologies to provide a fast, responsi
 ---
 
 ## Documentation Guide
+[Route documentation](docs/route.md)
