@@ -120,51 +120,53 @@ export default function DoctorMedicalRecordsPage() {
             {!error && records && records.content.length > 0 && (
                 <ul className="divide-y">
                     {records.content.map((record) => (
-                        <DoctorMedicalRecordRow 
+                        <DoctorMedicalRecordRow
                             key={record.id}
                             record={record}
                         />
                     ))}
-
-                    {!error && records && records.totalPages > 1 && (
-                        <nav
-                            aria-label="Medical records pagination"
-                            className="flex items-center justify-between gap-3 border-t pt-4"
-                        >
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                disabled={records.first || recordsLoading}
-                                onClick={() =>
-                                    setPage((current) => Math.max(0, current - 1))
-                                }
-                            >
-                                <HugeiconsIcon
-                                    icon={ArrowLeft01Icon}
-                                    data-icon="inline-start"
-                                />
-                                Previous
-                            </Button>
-                            <span className="text-xs text-muted-foreground">
-                                Page {records.number + 1} of {records.totalPages}
-                            </span>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                disabled={records.last || recordsLoading}
-                                onClick={() => setPage((current) => current + 1)}
-                            >
-                                Next
-                                <HugeiconsIcon
-                                    icon={ArrowRight01Icon}
-                                    data-icon="inline-end"
-                                />
-                            </Button>
-                        </nav>
-                    )}
-                </div>
-            );
+                </ul>
+            )}
+            
+            {!error && records && records.totalPages > 1 && (
+                <nav
+                    aria-label="Medical records pagination"
+                    className="flex items-center justify-between gap-3 border-t pt-4"
+                >
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        disabled={records.first || recordsLoading}
+                        onClick={() =>
+                            setPage((current) => Math.max(0, current - 1))
+                        }
+                    >
+                        <HugeiconsIcon
+                            icon={ArrowLeft01Icon}
+                            data-icon="inline-start"
+                        />
+                        Previous
+                    </Button>
+                    <span className="text-xs text-muted-foreground">
+                        Page {records.number + 1} of {records.totalPages}
+                    </span>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        disabled={records.last || recordsLoading}
+                        onClick={() => setPage((current) => current + 1)}
+                    >
+                        Next
+                        <HugeiconsIcon
+                            icon={ArrowRight01Icon}
+                            data-icon="inline-end"
+                        />
+                    </Button>
+                </nav>
+            )}
+        </div>
+    );
 }
 
