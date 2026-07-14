@@ -14,21 +14,13 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from "@/components/ui/sheet";
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateMedicalRecord } from "@/features/doctor/records/api";
@@ -40,23 +32,24 @@ import {
 } from "@/features/doctor/records/schemas";
 import type { DoctorPatient } from "@/features/doctor/records/types";
 
-type CreateMedicalRecordSheetProps = {
+type CreateMedicalRecordDialogProps = {
     patients: DoctorPatient[];
     triggerLabel?: string;
 };
 
-export function CreateMedicalRecordSheet({
+export function CreateMedicalRecordDialog({
     patients,
     triggerLabel = "New medical record",
-}: CreateMedicalRecordSheetProps) {
+}: CreateMedicalRecordDialogProps) {
     const router = useRouter();
     const createRecord = useCreateMedicalRecord();
+    const [patientInput, setPatientInput] = useState("");
     const [open, setOpen] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
     const form = useForm<MedicalRecordFormValues>({
         resolver: zodResolver(medicalRecordFormSchema),
         defaultValues: {
-            patientId: patients[0]?.id ?? 0,
+            patientId: 0,
             diagnosis: "",
             symptoms: "",
             receipt: "",
@@ -65,10 +58,10 @@ export function CreateMedicalRecordSheet({
     });
     const submit = form.handleSubmit(async (values) => {
         setServerError(null);
-
         try {
             const request = createMedicalRecordRequestSchema.parse(values);
             const record = await createRecord.trigger(request);
+            setPatientInput("");
             setOpen(false);
             form.reset();
             router.push(`/doctor/medical-records/${record.id}`);
@@ -80,26 +73,26 @@ export function CreateMedicalRecordSheet({
             );
         }
     });
-
-    const patientItems = Object.fromEntries(
-        patients.map((patient) => [
-            String(patient.id),
-            `${patient.firstName} ${patient.lastName}`,
-        ]),
-    );
-
     return (
-        <Sheet
+        <Dialog
             open={open}
             onOpenChange={(nextOpen) => {
                 setOpen(nextOpen);
                 setServerError(null);
-                if (nextOpen && patients[0]) {
-                    form.setValue("patientId", patients[0].id);
+
+                if (nextOpen) {
+                    setPatientInput("");
+                    form.reset({
+                        patientId: 0,
+                        diagnosis: "",
+                        symptoms: "",
+                        receipt: "",
+                        labTests: [],
+                    });
                 }
             }}
         >
-            <SheetTrigger
+            <DialogTrigger
                 render={
                     <Button
                         type="button"
@@ -112,18 +105,18 @@ export function CreateMedicalRecordSheet({
                 }
             />
 
-            <SheetContent className="overflow-y-auto sm:max-w-xl">
-                <SheetHeader>
-                    <SheetTitle>Create medical record</SheetTitle>
-                    <SheetDescription>
+            <DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto rounded-lg sm:max-w-2xl">
+                <DialogHeader>
+                    <DialogTitle>Create medical record</DialogTitle>
+                    <DialogDescription>
                         Add a diagnosis and optional laboratory requests.
-                    </SheetDescription>
-                </SheetHeader>
+                    </DialogDescription>
+                </DialogHeader>
 
                 <form
                     onSubmit={submit}
                     noValidate
-                    className="flex flex-col gap-6 px-6 pb-6"
+                    className="flex flex-col gap-6"
                 >
                     <FieldGroup>
                         <Field
@@ -140,38 +133,37 @@ export function CreateMedicalRecordSheet({
                                 control={form.control}
                                 name="patientId"
                                 render={({ field }) => (
-                                    <Select
-                                        items={patientItems}
-                                        value={
-                                            field.value
-                                                ? String(field.value)
-                                                : undefined
-                                        }
-                                        onValueChange={(value) =>
-                                            field.onChange(Number(value))
-                                        }
-                                    >
-                                        <SelectTrigger
+                                    <>
+                                        <Input
                                             id="record-patient"
-                                            className="w-full"
-                                            aria-label="Patient"
-                                        >
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                {patients.map((patient) => (
-                                                    <SelectItem
-                                                        key={patient.id}
-                                                        value={String(patient.id)}
-                                                    >
-                                                        {patient.firstName}{" "}
-                                                        {patient.lastName}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
+                                            list="doctor-patient-options"
+                                            value={patientInput}
+                                            placeholder="Type patient name or email"
+                                            autoComplete="off"
+                                            onBlur={field.onBlur}
+                                            onChange={(event) => {
+                                                const value = event.target.value;
+                                                const patient = findPatient(patients, value);
+
+                                                setPatientInput(value);
+                                                field.onChange(patient?.id ?? 0);
+                                            }}
+                                            aria-invalid={
+                                                form.formState.errors.patientId
+                                                    ? true
+                                                    : undefined
+                                            }
+                                        />
+
+                                        <datalist id="doctor-patient-options">
+                                            {patients.map((patient) => (
+                                                <option
+                                                    key={patient.id}
+                                                    value={getPatientLabel(patient)}
+                                                />
+                                            ))}
+                                        </datalist>
+                                    </>
                                 )}
                             />
                             <FieldError
@@ -250,7 +242,45 @@ export function CreateMedicalRecordSheet({
                         </Button>
                     </FieldGroup>
                 </form>
-            </SheetContent>
-        </Sheet>
+            </DialogContent>
+        </Dialog>
     );
+}
+function getPatientName(patient: DoctorPatient): string {
+    return `${patient.firstName} ${patient.lastName}`.trim();
+}
+
+function getPatientLabel(patient: DoctorPatient): string {
+    const name = getPatientName(patient);
+
+    return patient.email
+        ? `${name} (${patient.email})`
+        : name;
+}
+
+function findPatient(
+    patients: DoctorPatient[],
+    value: string,
+): DoctorPatient | undefined {
+    const normalized = value.trim().toLowerCase();
+
+    const directMatch = patients.find((patient) => {
+        return (
+            getPatientLabel(patient).toLowerCase() === normalized ||
+            patient.email?.toLowerCase() === normalized
+        );
+    });
+
+    if (directMatch) {
+        return directMatch;
+    }
+
+    const nameMatches = patients.filter(
+        (patient) =>
+            getPatientName(patient).toLowerCase() === normalized,
+    );
+
+    return nameMatches.length === 1
+        ? nameMatches[0]
+        : undefined;
 }

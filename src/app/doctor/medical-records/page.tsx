@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import {
     ArrowLeft01Icon,
     ArrowRight01Icon,
@@ -12,6 +11,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@/components/ui/button";
 import {
     Empty,
+    EmptyContent,
     EmptyDescription,
     EmptyHeader,
     EmptyMedia,
@@ -22,7 +22,8 @@ import {
     useDoctorPatients,
     useDoctorRecords,
 } from "@/features/doctor/records/api";
-import { CreateMedicalRecordSheet } from "@/features/doctor/records/create-medical-record-sheet";
+import { CreateMedicalRecordDialog } from "@/features/doctor/records/create-medical-record-dialog";
+import { DoctorMedicalRecordRow } from "@/features/doctor/records/doctor-medical-record-row";
 
 const PAGE_SIZE = 10;
 
@@ -51,9 +52,15 @@ export default function DoctorMedicalRecordsPage() {
     return (
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
             <header className="flex flex-wrap items-center justify-between gap-4">
-                <h1 className="text-xl font-semibold">Medical records</h1>
+                <h1 className="text-xl font-semibold tracking-tight">
+                    Medical records
+                </h1>
+
                 {patients && (
-                    <CreateMedicalRecordSheet patients={patients} />
+                    <CreateMedicalRecordDialog
+                        patients={patients}
+                        triggerLabel="New record"
+                    />
                 )}
             </header>
 
@@ -93,10 +100,19 @@ export default function DoctorMedicalRecordsPage() {
                                     strokeWidth={2}
                                 />
                             </EmptyMedia>
-                            <EmptyTitle>No medical records found</EmptyTitle>
+                            <EmptyTitle>No records yet</EmptyTitle>
                             <EmptyDescription>
-                                Create a record after reviewing a patient.
+                                Records you create will appear here.
                             </EmptyDescription>
+
+                            {patients && (
+                                <EmptyContent>
+                                    <CreateMedicalRecordDialog
+                                        patients={patients}
+                                        triggerLabel="New record"
+                                    />
+                                </EmptyContent>
+                            )}
                         </EmptyHeader>
                     </Empty>
                 )}
@@ -104,29 +120,10 @@ export default function DoctorMedicalRecordsPage() {
             {!error && records && records.content.length > 0 && (
                 <ul className="divide-y">
                     {records.content.map((record) => (
-                        <li key={record.id}>
-                            <Link
-                                href={`/doctor/medical-records/${record.id}`}
-                                className="flex items-center justify-between gap-4 py-3 transition-colors hover:text-primary"
-                            >
-                                <div className="min-w-0">
-                                    <p className="truncate text-sm font-medium">
-                                        {record.patientFullName}
-                                    </p>
-                                    <p className="truncate text-sm text-muted-foreground">
-                                        {formatDate(record.recordDate)}
-                                        {" / "}
-                                        {record.diagnosis}
-                                    </p>
-                                </div>
-                                <span className="shrink-0 text-xs text-muted-foreground">
-                                    {record.labResponses.length}{" "}
-                                    {record.labResponses.length === 1
-                                        ? "test"
-                                        : "tests"}
-                                </span>
-                            </Link>
-                        </li>
+                        <DoctorMedicalRecordRow
+                            key={record.id}
+                            record={record}
+                        />
                     ))}
                 </ul>
             )}
@@ -173,15 +170,3 @@ export default function DoctorMedicalRecordsPage() {
     );
 }
 
-function formatDate(value: string): string {
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) {
-        return value;
-    }
-
-    return new Intl.DateTimeFormat("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-    }).format(date);
-}

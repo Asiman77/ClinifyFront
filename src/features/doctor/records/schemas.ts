@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const medicalRecordFormSchema = z.object({
-    patientId: z.number().int().positive("Patient is required"),
+    patientId: z.number().int().positive("Enter a valid patient"),
     diagnosis: z
         .string()
         .trim()

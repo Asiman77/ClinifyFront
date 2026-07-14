@@ -1,6 +1,7 @@
 import {
     Calendar03Icon,
     CalendarAdd01Icon,
+    FileAttachmentIcon,
     Home01Icon,
     TestTube01Icon,
 } from "@hugeicons/core-free-icons";
@@ -29,6 +30,16 @@ const NAVIGATION_BY_ROLE = {
             href: "/doctor/dashboard",
             label: "Dashboard",
             icon: Home01Icon,
+        },
+        {
+            href: "/doctor/appointments",
+            label: "Appointments",
+            icon: Calendar03Icon,
+        },
+        {
+            href: "/doctor/medical-records",
+            label: "Medical records",
+            icon: FileAttachmentIcon,
         },
     ],
 

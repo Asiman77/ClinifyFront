@@ -46,28 +46,28 @@ export default function DoctorAppointmentsPage() {
     const appointments = data?.page.content ?? [];
     const upcoming = data
         ? appointments
-              .filter((appointment) =>
-                  isUpcomingAppointment(
-                      appointment,
-                      data.currentDateTime,
-                  ),
-              )
-              .sort((first, second) =>
-                  first.startTime.localeCompare(second.startTime),
-              )
+            .filter((appointment) =>
+                isUpcomingAppointment(
+                    appointment,
+                    data.currentDateTime,
+                ),
+            )
+            .sort((first, second) =>
+                first.startTime.localeCompare(second.startTime),
+            )
         : [];
     const pastAndClosed = data
         ? appointments
-              .filter(
-                  (appointment) =>
-                      !isUpcomingAppointment(
-                          appointment,
-                          data.currentDateTime,
-                      ),
-              )
-              .sort((first, second) =>
-                  second.startTime.localeCompare(first.startTime),
-              )
+            .filter(
+                (appointment) =>
+                    !isUpcomingAppointment(
+                        appointment,
+                        data.currentDateTime,
+                    ),
+            )
+            .sort((first, second) =>
+                second.startTime.localeCompare(first.startTime),
+            )
         : [];
 
     async function handleAction(
@@ -106,7 +106,9 @@ export default function DoctorAppointmentsPage() {
 
     return (
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-            <h1 className="text-xl font-semibold">Appointments</h1>
+            <h1 className="text-xl font-semibold tracking-tight">
+                Appointments
+            </h1>
 
             {showInitialLoading && (
                 <div
@@ -141,16 +143,16 @@ export default function DoctorAppointmentsPage() {
                                 strokeWidth={2}
                             />
                         </EmptyMedia>
-                        <EmptyTitle>No appointments found</EmptyTitle>
+                        <EmptyTitle>No appointments yet</EmptyTitle>
                         <EmptyDescription>
-                            Assigned appointments will appear here.
+                            Requested appointments from patients will appear here.
                         </EmptyDescription>
                     </EmptyHeader>
                 </Empty>
             )}
 
             {!error && upcoming.length > 0 && (
-                <section aria-labelledby="doctor-upcoming-title">
+                <section aria-labelledby="doctor-upcoming-title" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     <h2
                         id="doctor-upcoming-title"
                         className="text-xs font-medium uppercase text-muted-foreground"
@@ -164,12 +166,12 @@ export default function DoctorAppointmentsPage() {
             )}
 
             {!error && pastAndClosed.length > 0 && (
-                <section aria-labelledby="doctor-past-title">
+                <section aria-labelledby="doctor-past-title" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     <h2
                         id="doctor-past-title"
                         className="text-xs font-medium uppercase text-muted-foreground"
                     >
-                        Past and closed
+                        Past
                     </h2>
                     <ul className="mt-1 divide-y">
                         {pastAndClosed.map(renderAppointment)}
