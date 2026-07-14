@@ -22,8 +22,6 @@ export default function LabResponsesPage() {
         data,
         error,
         isLoading,
-        isValidating,
-        mutate,
     } = useLabResponses({
         page,
         size: PAGE_SIZE,

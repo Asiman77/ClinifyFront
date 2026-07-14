@@ -7,17 +7,36 @@ import {
   TestTube01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, } from "@/components/ui/empty";
 import { Spinner } from "@/components/ui/spinner";
-import { useOpenLabResponses } from "@/features/lab/api";
+import { useLabResponses, useOpenLabResponses } from "@/features/lab/api";
+import {
+  KpiRow,
+  KpiTile,
+} from "@/features/charts/kpi-tile";
 import { LabResponseRow } from "@/features/lab/components/lab-response-row";
+import { StatusDonutLoader } from "@/features/charts/status-donut-loader";
 
 const PAGE_SIZE = 10;
+const CHART_PAGE_SIZE = 100;
 
 export default function LabDashboardPage() {
   const [page, setPage] = useState(0);
+
+  const [today] = useState(() => {
+    const currentDate = new Date();
+
+    const year = currentDate.getFullYear();
+    const month = String(
+      currentDate.getMonth() + 1,
+    ).padStart(2, "0");
+    const day = String(
+      currentDate.getDate(),
+    ).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  });
 
   const {
     data,
@@ -29,19 +48,108 @@ export default function LabDashboardPage() {
     sort: "createdAt,asc",
   });
 
-  const responses = data?.content ?? [];
-  const showInitialLoading = isLoading && !data;
+  const { data: chartData } = useOpenLabResponses({
+    page: 0,
+    size: CHART_PAGE_SIZE,
+    sort: "createdAt,asc",
+  });
 
+  const { data: analyticsData } = useLabResponses({
+    page: 0,
+    size: 100,
+    sort: "updatedAt,desc",
+  });
+
+  const responses = data?.content ?? [];
+  const chartResponses = chartData?.content ?? [];
+  const queueDistribution = [
+    {
+      status: "PENDING" as const,
+      count: chartResponses.filter(
+        (response) => response.status === "PENDING",
+      ).length,
+    },
+    {
+      status: "IN_PROGRESS" as const,
+      count: chartResponses.filter(
+        (response) =>
+          response.status === "IN_PROGRESS",
+      ).length,
+    },
+  ];
+
+  const completedResponses =
+    analyticsData?.content.filter(
+      (response) => response.status === "COMPLETED",
+    ) ?? [];
+
+  const turnaroundValues = completedResponses
+    .map(
+      (response) =>
+        (Date.parse(response.updatedAt) -
+          Date.parse(response.createdAt)) /
+        (1000 * 60 * 60 * 24),
+    )
+    .filter(
+      (days) => Number.isFinite(days) && days >= 0,
+    );
+
+  const averageTurnaroundDays =
+    turnaroundValues.length === 0
+      ? null
+      : Math.round(
+        (turnaroundValues.reduce(
+          (total, days) => total + days, 0,) / turnaroundValues.length) * 10,) / 10;
+
+  const completedToday = completedResponses.filter(
+    (response) =>
+      response.updatedAt.slice(0, 10) === today,
+  ).length;
+
+  const showInitialLoading = isLoading && !data;
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
+
       <header className="flex flex-col gap-1">
-        <h1 className="text-xl font-semibold tracking-tight">
-          Laboratory queue
-        </h1>
+        <div className="flex items-baseline justify-between gap-3">
+          <h1 className="text-xl font-semibold tracking-tight">
+            Pending lab queue
+          </h1>
+
+          {data && data.totalElements > 0 && (
+            <span className="text-sm tabular-nums text-muted-foreground">
+              {data.totalElements} open
+            </span>
+          )}
+        </div>
+
         <p className="text-sm text-muted-foreground">
-          Open laboratory requests awaiting review.
+          Open tests awaiting a result, oldest first.
         </p>
       </header>
+
+      {analyticsData && (
+        <KpiRow columns={2} reserveDetail>
+          <KpiTile
+            label="Avg. turnaround"
+            value={
+              averageTurnaroundDays === null
+                ? "—"
+                : `${averageTurnaroundDays} days`
+            }
+            detail={
+              averageTurnaroundDays === null
+                ? "No completed tests yet"
+                : undefined
+            }
+          />
+
+          <KpiTile
+            label="Completed today"
+            value={String(completedToday)}
+          />
+        </KpiRow>
+      )}
       {showInitialLoading && (
         <div
           role="status"
@@ -86,14 +194,29 @@ export default function LabDashboardPage() {
       )}
 
       {!error && responses.length > 0 && (
-        <ul className="divide-y">
-          {responses.map((response) => (
-            <LabResponseRow
-              key={response.id}
-              response={response}
-            />
-          ))}
-        </ul>
+        <div className="flex flex-col gap-4">
+          {chartResponses.length > 0 && (
+            <section className="flex flex-col gap-2 sm:max-w-xs">
+              <h2 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Queue by status
+              </h2>
+
+              <StatusDonutLoader
+                data={queueDistribution}
+                totalLabel="Total"
+              />
+            </section>
+          )}
+
+          <ul className="divide-y">
+            {responses.map((response) => (
+              <LabResponseRow
+                key={response.id}
+                response={response}
+              />
+            ))}
+          </ul>
+        </div>
       )}
 
       {!error && data && data.totalPages > 1 && (

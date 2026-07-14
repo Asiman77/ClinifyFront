@@ -1,20 +1,19 @@
-"use client"
+"use client";
 
-import dynamic from "next/dynamic"
+import dynamic from "next/dynamic";
 
-import type { StatusDonutDatum } from "./status-donut"
+import type { StatusDonutDatum } from "./status-donut";
 
-// Code-split but SSR'd (owner feedback: no loading flash). dither-kit is
-// SSR-safe — all canvas/ResizeObserver access lives in effects — so the chart
-// structure + legend render on the server and the canvas paints on hydrate.
 const StatusDonutImpl = dynamic(() =>
-  import("./status-donut").then((m) => m.StatusDonut)
-)
+  import("./status-donut").then(
+    (module) => module.StatusDonut,
+  ),
+);
 
 export function StatusDonutLoader(props: {
-  data: StatusDonutDatum[]
-  totalLabel: string
-  className?: string
+  data: StatusDonutDatum[];
+  totalLabel: string;
+  className?: string;
 }) {
-  return <StatusDonutImpl {...props} />
+  return <StatusDonutImpl {...props} />;
 }
