@@ -59,6 +59,16 @@ const NAVIGATION_BY_ROLE = {
             label: "Appointments",
             icon: Calendar03Icon,
         },
+        {
+            href: "/patient/medical-records",
+            label: "Medical records",
+            icon: FileAttachmentIcon,
+        },
+        {
+            href: "/patient/lab-results",
+            label: "Lab results",
+            icon: TestTube01Icon,
+        },
     ],
 
     LAB_TECHNICIAN: [
