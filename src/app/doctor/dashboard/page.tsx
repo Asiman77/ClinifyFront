@@ -106,19 +106,6 @@ export default function DoctorDashboardPage() {
           </p>
         </div>
       )}
-
-      {data && records && doctorPatients && !dashboardError && (
-        <>
-          <DoctorDashboardStats
-            upcoming={upcoming.length}
-            patients={doctorPatients.length}
-            records={records.totalElements}
-          />
-          <DoctorUpcomingPreview
-            appointments={upcoming.slice(0, 5)}
-          />
-        </>
-      )}
     </div>
   );
 }
