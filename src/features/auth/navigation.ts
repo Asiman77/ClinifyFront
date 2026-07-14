@@ -2,6 +2,7 @@ import {
     Calendar03Icon,
     CalendarAdd01Icon,
     Home01Icon,
+    TestTube01Icon,
 } from "@hugeicons/core-free-icons";
 
 import type { Role } from "@/types/auth";
@@ -54,6 +55,11 @@ const NAVIGATION_BY_ROLE = {
             href: "/lab/dashboard",
             label: "Dashboard",
             icon: Home01Icon,
+        },
+        {
+            href: "/lab/responses",
+            label: "Lab responses",
+            icon: TestTube01Icon,
         },
     ],
 
