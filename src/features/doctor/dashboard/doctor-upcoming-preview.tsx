@@ -5,11 +5,14 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@/components/ui/button";
 import { DoctorAppointmentRow } from "@/features/doctor/appointments/doctor-appointment-row";
 import type { AppointmentResponse } from "@/types/appointment";
+import { ReactNode } from "react";
 
 export function DoctorUpcomingPreview({
     appointments,
+    footer,
 }: {
     appointments: AppointmentResponse[];
+    footer?: ReactNode;
 }) {
     return (
         <section aria-labelledby="dashboard-upcoming-title">
@@ -48,6 +51,7 @@ export function DoctorUpcomingPreview({
                     ))}
                 </ul>
             )}
+            {footer && <div className="mt-4">{footer}</div>}
         </section>
     );
 }
