@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import {
-    Appointment01Icon,
-    HospitalLocationIcon,
+    Location01Icon,
+    Video01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
@@ -31,11 +31,7 @@ export function DoctorAppointmentRow({
                     title={typeLabel}
                 >
                     <HugeiconsIcon
-                        icon={
-                            isOnline
-                                ? Appointment01Icon
-                                : HospitalLocationIcon
-                        }
+                        icon={isOnline ? Video01Icon : Location01Icon}
                         className="size-4"
                         strokeWidth={2}
                         aria-hidden="true"
@@ -49,17 +45,13 @@ export function DoctorAppointmentRow({
                     </p>
                     <p className="text-sm text-muted-foreground">
                         {formatDate(appointment.startTime)}
-                        {" / "}
+                        {" \u00B7 "}
                         <span className="tabular-nums">
-                            {formatTime(appointment.startTime)} -{" "}
+                            {formatTime(appointment.startTime)}
+                            {"\u2013"}
                             {formatTime(appointment.endTime)}
                         </span>
                     </p>
-                    {appointment.reason && (
-                        <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
-                            {appointment.reason}
-                        </p>
-                    )}
                 </div>
             </div>
 
