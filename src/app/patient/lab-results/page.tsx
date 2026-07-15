@@ -32,7 +32,6 @@ export default function PatientLabResultsPage() {
     } = usePatientLabResults({
         page,
         size: PAGE_SIZE,
-        sort: "recordDate,desc",
     });
 
     const results = data?.content ?? [];
