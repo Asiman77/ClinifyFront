@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 
-import { backendFetch } from "@/lib/api/backend";
+import { backendFetch, backendRequest } from "@/lib/api/backend";
 import { createRouteErrorResponse } from "@/lib/api/route-error";
 import type { PageResponse } from "@/types/pagination";
-import { DoctorProfile } from "@/types/doctor";
+import { CreateDoctorProfileRequest, DoctorProfile } from "@/types/doctor";
+import { doctorFormSchema } from "@/features/admin/doctors/schemas";
 
 const ALLOWED_QUERY_PARAMS = [
     "departmentId",
@@ -48,6 +49,51 @@ export async function GET(request: Request) {
         return createRouteErrorResponse(
             error,
             "Doctors could not be loaded",
+        );
+    }
+}
+export async function POST(request: Request) {
+    try {
+        const values = doctorFormSchema.parse(
+            await request.json(),
+        );
+
+        const payload: CreateDoctorProfileRequest = {
+            userId: values.userId,
+            departmentId: values.departmentId,
+            specialization: values.specialization,
+            bio: values.bio || null,
+            experienceYears: values.experienceYears,
+            active: values.active,
+        };
+
+        const { data, status, setCookies } =
+            await backendRequest<DoctorProfile>(
+                "/api/doctors",
+                {
+                    method: "POST",
+                    headers: {
+                        cookie:
+                            request.headers.get("cookie") ?? "",
+                    },
+                    body: JSON.stringify(payload),
+                    cache: "no-store",
+                },
+            );
+
+        const response = NextResponse.json(data, {
+            status,
+        });
+
+        for (const cookie of setCookies) {
+            response.headers.append("Set-Cookie", cookie);
+        }
+
+        return response;
+    } catch (error) {
+        return createRouteErrorResponse(
+            error,
+            "Doctor could not be created",
         );
     }
 }
