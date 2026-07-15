@@ -2,7 +2,6 @@ import {
     Building02Icon,
     Calendar03Icon,
     CalendarAdd01Icon,
-    Clock01Icon,
     FileAttachmentIcon,
     Home01Icon,
     StethoscopeIcon,
@@ -35,11 +34,6 @@ const NAVIGATION_BY_ROLE = {
             href: "/admin/doctors",
             label: "Doctors",
             icon: StethoscopeIcon,
-        },
-        {
-            href: "/admin/availabilities",
-            label: "Availabilities",
-            icon: Clock01Icon,
         },
     ],
 
