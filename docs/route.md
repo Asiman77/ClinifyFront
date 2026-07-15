@@ -4,7 +4,7 @@
 
 | Route | Description |
 |-------|-------------|
-| `/` | Default Next.js landing page (not yet customized) |
+| `/` | Landing page |
 | `/auth` | Login and registration |
 | `/select-role` | Role selection after authentication |
 | `/doctors` | List of available doctors |
