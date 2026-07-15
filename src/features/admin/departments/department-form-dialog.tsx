@@ -35,6 +35,7 @@ import type {
     Department,
     DepartmentRequest,
 } from "@/types/department";
+import { DepartmentDeactivateDialog } from "./department-deactivate-dialog";
 
 type DepartmentFormDialogProps = {
     department?: Department;
@@ -171,7 +172,14 @@ export function DepartmentFormDialog({
                             <FieldError>{serverError}</FieldError>
                         )}
 
-                        <DialogFooter showCloseButton>
+                        <DialogFooter className={department?.active ? "sm:justify-between" : undefined}>
+                            {department?.active && (
+                                <DepartmentDeactivateDialog
+                                    department={department}
+                                    onDeactivated={() => setOpen(false)}
+                                />
+                            )}
+
                             <Button type="submit" disabled={isBusy}>
                                 {isBusy && <Spinner data-icon="inline-start" />}
                                 {isEdit ? "Save changes" : "Create department"}
