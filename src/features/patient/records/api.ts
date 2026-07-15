@@ -5,8 +5,8 @@ import useSWR from "swr";
 import type {
     MedicalRecord,
     MedicalRecordSummary,
-    PatientLabResultSummary,
 } from "@/types/medical-record";
+import type { PatientLabResultSummary } from "@/types/lab";
 import type { PageResponse } from "@/types/pagination";
 
 export class PatientRecordApiError extends Error {

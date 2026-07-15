@@ -1,8 +1,7 @@
 import Link from "next/link";
 
 import { LabStatusBadge } from "@/features/lab/components/lab-status-badge";
-import type { PatientLabResultSummary } from "@/types/medical-record";
-
+import type { PatientLabResultSummary } from "@/types/lab";
 export function PatientLabResultRow({
     result,
 }: {

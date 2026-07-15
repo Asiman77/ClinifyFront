@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { backendRequest } from "@/lib/api/backend";
 import { createRouteErrorResponse } from "@/lib/api/route-error";
-import type { PatientLabResultSummary } from "@/types/medical-record";
+import type { PatientLabResultSummary } from "@/types/lab";
 import type { PageResponse } from "@/types/pagination";
 
 const querySchema = z.object({
