@@ -2,6 +2,7 @@ import { WorkflowSquareIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
 import { FeatureCard } from "./feature-card";
+import { Reveal, Stagger, StaggerItem } from "./motion/reveal";
 
 const FEATURES = [
     {
@@ -34,7 +35,7 @@ export function HowItWorks() {
     return (
         <section id="how-it-works" className="scroll-mt-16 bg-background" >
             <div className="mx-auto w-full max-w-[1000px] px-6 py-24">
-                <div className="mx-auto flex max-w-2xl flex-col items-center gap-4 text-center">
+                <Reveal className="mx-auto flex max-w-2xl flex-col items-center gap-4 text-center">
                     <span className="inline-flex items-center gap-2 text-sm font-medium text-primary uppercase">
                         <HugeiconsIcon
                             icon={WorkflowSquareIcon}
@@ -52,13 +53,15 @@ export function HowItWorks() {
                         Book an appointment and it is linked to the patient chart. Doctor
                         notes and laboratory results stay connected to the same record.
                     </p>
-                </div>
+                </Reveal>
 
-                <div className="mt-24 grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-12">
+                <Stagger className="mt-24 grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-12">
                     {FEATURES.map((feature) => (
-                        <FeatureCard key={feature.title} title={feature.title} body={feature.body} alt={feature.alt} src={feature.src} />
+                        <StaggerItem key={feature.title}>
+                            <FeatureCard title={feature.title} body={feature.body} alt={feature.alt} src={feature.src} />
+                        </StaggerItem>
                     ))}
-                </div>
+                </Stagger>
             </div>
         </section >
     );

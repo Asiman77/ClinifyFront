@@ -9,8 +9,7 @@ type LandingCtaTone = "solid" | "glass" | "primary";
 
 const CTA_STYLES: Record<LandingCtaTone, string> = {
     solid: "bg-white text-neutral-950 shadow-sm hover:bg-white/90",
-    glass:
-        "border border-white/20 bg-white/10 text-white backdrop-blur-md hover:bg-white/20",
+    glass: "border border-white/20 bg-white/10 text-white backdrop-blur-md hover:bg-white/20",
     primary: "bg-primary text-primary-foreground hover:bg-primary/90",
 };
 

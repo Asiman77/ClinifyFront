@@ -5,6 +5,8 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
+import { Stagger, StaggerItem } from "./motion/reveal";
+
 const PROBLEMS = [
     {
         title: "Paper charts & spreadsheets",
@@ -32,25 +34,27 @@ export function ProblemSection() {
             <div className="mx-auto w-full max-w-[1440px] px-6 py-16">
                 <h2 className="sr-only">Problems Clinify solves</h2>
 
-                <div className="grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-border">
+                <Stagger className="grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-border">
                     {PROBLEMS.map((problem) => (
-                        <article key={problem.title} className="flex flex-col gap-3 sm:px-8" >
-                            <HugeiconsIcon
-                                icon={problem.icon}
-                                className={`size-6 ${problem.iconClassName}`}
-                                aria-hidden
-                            />
+                        <StaggerItem key={problem.title} className="sm:px-8">
+                            <article className="flex h-full flex-col gap-3">
+                                <HugeiconsIcon
+                                    icon={problem.icon}
+                                    className={`size-6 ${problem.iconClassName}`}
+                                    aria-hidden
+                                />
 
-                            <h3 className="font-heading text-lg font-semibold text-foreground">
-                                {problem.title}
-                            </h3>
+                                <h3 className="font-heading text-lg font-semibold text-foreground">
+                                    {problem.title}
+                                </h3>
 
-                            <p className="text-sm text-pretty text-muted-foreground">
-                                {problem.body}
-                            </p>
-                        </article>
+                                <p className="text-sm text-pretty text-muted-foreground">
+                                    {problem.body}
+                                </p>
+                            </article>
+                        </StaggerItem>
                     ))}
-                </div>
+                </Stagger>
             </div>
         </section>
     );
