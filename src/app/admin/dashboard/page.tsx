@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { AdminDashboardSummary } from "@/features/admin/dashboard/admin-dashboard-summary";
 import { AdminDoctorAnalytics } from "@/features/admin/dashboard/admin-doctor-analytics";
+import { AdminOperationalAnalytics } from "@/features/admin/dashboard/admin-operational-analytics";
 import { useAdminDashboard } from "@/features/admin/dashboard/use-admin-dashboard";
 
 export default function AdminDashboardPage() {
@@ -11,6 +12,8 @@ export default function AdminDashboardPage() {
     departments,
     doctors,
     availabilities,
+    appointments,
+    labResponses,
     isLoading,
     error,
     retry,
@@ -19,11 +22,6 @@ export default function AdminDashboardPage() {
   const activeDoctorCount = doctors.filter(
     (doctor) => doctor.active,
   ).length;
-
-  const activeAvailabilityCount = availabilities.filter(
-    (availability) => availability.active,
-  ).length;
-
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-8">
       <header className="flex flex-col gap-1">
@@ -78,14 +76,18 @@ export default function AdminDashboardPage() {
             doctorCount={doctors.length}
             activeDoctorCount={activeDoctorCount}
             availabilityCount={availabilities.length}
-            activeAvailabilityCount={
-              activeAvailabilityCount
-            }
+
           />
 
           <AdminDoctorAnalytics
             departments={departments}
             doctors={doctors}
+          />
+
+          <AdminOperationalAnalytics
+            doctors={doctors}
+            appointments={appointments}
+            labResponses={labResponses}
           />
         </>
       )}
