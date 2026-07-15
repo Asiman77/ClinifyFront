@@ -134,3 +134,20 @@
     scroll-behavior: auto;
   }
 }
+@media print {
+    body.printing-lab-result * {
+        visibility: hidden;
+    }
+
+    body.printing-lab-result [data-print-target="true"],
+    body.printing-lab-result [data-print-target="true"] * {
+        visibility: visible;
+    }
+
+    body.printing-lab-result [data-print-target="true"] {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        padding: 0;
+    }
+}

@@ -5,14 +5,18 @@ import { HugeiconsIcon } from "@hugeicons/react";
 
 import { Button } from "@/components/ui/button";
 
-export function PrintButton() {
+export function PrintButton({
+    onPrint,
+}: {
+    onPrint?: () => void;
+}) {
     return (
         <Button
             type="button"
             variant="outline"
             size="sm"
             className="print:hidden"
-            onClick={() => window.print()}
+            onClick={onPrint ?? (() => window.print())}
         >
             <HugeiconsIcon
                 icon={PrinterIcon}
