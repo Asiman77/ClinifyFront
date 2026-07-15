@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { availabilityFormSchema } from "@/features/admin/availabilities/schemas";
+import { updateAvailabilityFormSchema } from "@/features/admin/availabilities/schemas";
 import { backendRequest } from "@/lib/api/backend";
 import { createRouteErrorResponse } from "@/lib/api/route-error";
 import type {
@@ -13,11 +13,6 @@ const availabilityIdSchema = z.coerce
     .number()
     .int("Availability id must be an integer")
     .positive("Availability id must be positive");
-
-const updateAvailabilitySchema =
-    availabilityFormSchema.omit({
-        doctorId: true,
-    });
 
 const statusSchema = z.object({
     active: z.boolean(),
@@ -40,7 +35,7 @@ export async function PUT(
                 routeParams.availabilityId,
             );
 
-        const values = updateAvailabilitySchema.parse(
+        const values = updateAvailabilityFormSchema.parse(
             await request.json(),
         );
 
