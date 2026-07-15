@@ -1,4 +1,5 @@
 import {
+    Building02Icon,
     Calendar03Icon,
     CalendarAdd01Icon,
     FileAttachmentIcon,
@@ -22,6 +23,11 @@ const NAVIGATION_BY_ROLE = {
             href: "/admin/dashboard",
             label: "Dashboard",
             icon: Home01Icon,
+        },
+        {
+            href: "/admin/departments",
+            label: "Departments",
+            icon: Building02Icon,
         },
     ],
 

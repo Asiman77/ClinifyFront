@@ -1,31 +1,30 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 
 import { departmentFormSchema } from "@/features/admin/departments/schemas";
-import { backendFetch, backendRequest, } from "@/lib/api/backend";
+import { backendRequest } from "@/lib/api/backend";
 import { createRouteErrorResponse } from "@/lib/api/route-error";
 import type { Department, DepartmentRequest, } from "@/types/department";
 
-export async function GET() {
+const paramsSchema = z.object({
+    departmentId: z.coerce.number().int().positive(),
+});
+
+type DepartmentRouteContext = {
+    params: Promise<{
+        departmentId: string;
+    }>;
+};
+
+export async function PUT(
+    request: Request,
+    context: DepartmentRouteContext,
+) {
     try {
-        const departments = await backendFetch<Department[]>(
-            "/api/departments",
-            {
-                method: "GET",
-                cache: "no-store",
-            },
+        const { departmentId } = paramsSchema.parse(
+            await context.params,
         );
 
-        return NextResponse.json(departments);
-    } catch (error) {
-        return createRouteErrorResponse(
-            error,
-            "Departments could not be loaded",
-        );
-    }
-}
-
-export async function POST(request: Request) {
-    try {
         const values = departmentFormSchema.parse(
             await request.json(),
         );
@@ -37,9 +36,10 @@ export async function POST(request: Request) {
         };
 
         const { data, status, setCookies } =
-            await backendRequest<Department>("/api/departments",
+            await backendRequest<Department>(
+                `/api/departments/${departmentId}`,
                 {
-                    method: "POST",
+                    method: "PUT",
                     headers: {
                         cookie:
                             request.headers.get("cookie") ??
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     } catch (error) {
         return createRouteErrorResponse(
             error,
-            "Department could not be created",
+            "Department could not be updated",
         );
     }
 }
