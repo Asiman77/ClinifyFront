@@ -20,10 +20,6 @@ type UpdateDepartmentArg = {
     request: DepartmentRequest;
 };
 
-type DeactivateDepartmentArg = {
-    departmentId: number;
-};
-
 function revalidateDepartments() {
     void mutate(DEPARTMENTS_API);
 }
@@ -47,18 +43,6 @@ async function updateDepartment(
         {
             method: "PUT",
             body: JSON.stringify(arg.request),
-        },
-    );
-}
-
-async function deactivateDepartment(
-    url: string,
-    { arg }: { arg: DeactivateDepartmentArg },
-) {
-    return adminRequestJson<void>(
-        `${url}/${arg.departmentId}`,
-        {
-            method: "DELETE",
         },
     );
 }
@@ -88,17 +72,6 @@ export function useUpdateDepartment() {
         string,
         UpdateDepartmentArg
     >(DEPARTMENTS_API, updateDepartment, {
-        onSuccess: revalidateDepartments,
-    });
-}
-
-export function useDeactivateDepartment() {
-    return useSWRMutation<
-        void,
-        AdminApiError,
-        string,
-        DeactivateDepartmentArg
-    >(DEPARTMENTS_API, deactivateDepartment, {
         onSuccess: revalidateDepartments,
     });
 }

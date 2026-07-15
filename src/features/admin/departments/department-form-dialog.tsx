@@ -35,8 +35,6 @@ import type {
     Department,
     DepartmentRequest,
 } from "@/types/department";
-import { DepartmentDeactivateDialog } from "./department-deactivate-dialog";
-import { Left } from "@hugeicons/core-free-icons";
 
 type DepartmentFormDialogProps = {
     department?: Department;
