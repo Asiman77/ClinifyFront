@@ -15,7 +15,8 @@ Clinify is a healthcare management system designed to streamline communication a
 
 - [Frontend Repository](https://github.com/Asiman77/ClinifyFront)
 - [Backend Repository](https://github.com/Asiman77/Clinic-Simplify-Clinify)
-- [Live application link]()
+- [Live Application](https://clinify-delta.vercel.app/)
+- [Jira Project Board](https://sevincquliyeva000.atlassian.net/jira/software/projects/CLIN/boards/3)
 
 ---
 
