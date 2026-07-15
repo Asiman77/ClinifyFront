@@ -8,65 +8,95 @@ import {
 const TIME_PATTERN =
     /^([01]\d|2[0-3]):[0-5]\d$/;
 
-export const availabilityFormSchema = z
-    .object({
-        doctorId: z
-            .number()
-            .int("Doctor id must be an integer")
-            .positive("Select a doctor"),
-        dayOfWeek: z.enum(DAYS_OF_WEEK),
-        startTime: z
-            .string()
-            .regex(
-                TIME_PATTERN,
-                "Enter a valid start time",
-            ),
-        endTime: z
-            .string()
-            .regex(TIME_PATTERN, "Enter a valid end time",
-            ),
-        slotDurationMinutes: z
-            .number()
-            .int("Slot duration must be a whole number")
-            .min(
-                5,
-                "Slot duration must be at least 5 minutes",
-            )
-            .multipleOf(
-                5,
-                "Slot duration must use 5-minute increments",
-            ),
-        availabilityType: z.enum(
-            AVAILABILITY_TYPES,
+const availabilityBaseSchema = z.object({
+    doctorId: z
+        .number()
+        .int("Doctor id must be an integer")
+        .positive("Select a doctor"),
+    dayOfWeek: z.enum(DAYS_OF_WEEK),
+    startTime: z
+        .string()
+        .regex(
+            TIME_PATTERN,
+            "Enter a valid start time",
         ),
-        active: z.boolean(),
-    })
-    .superRefine((values, context) => {
-        const startMinutes = toMinutes(
-            values.startTime,
-        );
-        const endMinutes = toMinutes(values.endTime);
+    endTime: z
+        .string()
+        .regex(
+            TIME_PATTERN,
+            "Enter a valid end time",
+        ),
+    slotDurationMinutes: z
+        .number()
+        .int("Slot duration must be a whole number")
+        .min(
+            5,
+            "Slot duration must be at least 5 minutes",
+        )
+        .multipleOf(
+            5,
+            "Slot duration must use 5-minute increments",
+        ),
+    availabilityType: z.enum(
+        AVAILABILITY_TYPES,
+    ),
+    active: z.boolean(),
+});
 
-        if (endMinutes <= startMinutes) {
-            context.addIssue({
-                code: "custom",
-                path: ["endTime"],
-                message: "End time must be after start time",
-            });
+export const availabilityFormSchema =
+    availabilityBaseSchema.superRefine(
+        addWindowValidation,
+    );
 
-            return;
-        }
+export const updateAvailabilityFormSchema =
+    availabilityBaseSchema
+        .omit({
+            doctorId: true,
+        })
+        .superRefine(addWindowValidation);
 
-        if (values.slotDurationMinutes > endMinutes - startMinutes) {
-            context.addIssue({
-                code: "custom",
-                path: ["slotDurationMinutes"],
-                message: "Slot duration cannot exceed the availability window",
-            });
-        }
-    });
+export type AvailabilityFormValues = z.infer<
+    typeof availabilityFormSchema
+>;
 
-export type AvailabilityFormValues = z.infer< typeof availabilityFormSchema >;
+type AvailabilityWindowValues = {
+    startTime: string;
+    endTime: string;
+    slotDurationMinutes: number;
+};
+
+function addWindowValidation(
+    values: AvailabilityWindowValues,
+    context: z.RefinementCtx,
+) {
+    const startMinutes = toMinutes(
+        values.startTime,
+    );
+    const endMinutes = toMinutes(values.endTime);
+
+    if (endMinutes <= startMinutes) {
+        context.addIssue({
+            code: "custom",
+            path: ["endTime"],
+            message:
+                "End time must be after start time",
+        });
+
+        return;
+    }
+
+    if (
+        values.slotDurationMinutes >
+        endMinutes - startMinutes
+    ) {
+        context.addIssue({
+            code: "custom",
+            path: ["slotDurationMinutes"],
+            message:
+                "Slot duration cannot exceed the availability window",
+        });
+    }
+}
 
 function toMinutes(time: string): number {
     const [hours, minutes] = time
