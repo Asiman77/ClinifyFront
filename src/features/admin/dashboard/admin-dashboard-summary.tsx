@@ -1,15 +1,10 @@
 import { LinkButton } from "@/components/link-button";
-import {
-    KpiRow,
-    KpiTile,
-} from "@/features/charts/kpi-tile";
 
 type AdminDashboardSummaryProps = {
     departmentCount: number;
     doctorCount: number;
     activeDoctorCount: number;
     availabilityCount: number;
-    activeAvailabilityCount: number;
 };
 
 export function AdminDashboardSummary({
@@ -17,55 +12,60 @@ export function AdminDashboardSummary({
     doctorCount,
     activeDoctorCount,
     availabilityCount,
-    activeAvailabilityCount,
 }: AdminDashboardSummaryProps) {
     const inactiveDoctorCount =
         doctorCount - activeDoctorCount;
 
-    const items = [
+    const stats = [
         {
             label: "Departments",
-            value: departmentCount,
-            detail: `${departmentCount} clinic departments`,
+            value: String(departmentCount),
+            detail: null,
             href: "/admin/departments",
         },
         {
             label: "Doctors",
-            value: doctorCount,
+            value: String(doctorCount),
             detail: `${activeDoctorCount} active, ${inactiveDoctorCount} inactive`,
             href: "/admin/doctors",
         },
         {
             label: "Availability windows",
-            value: availabilityCount,
-            detail: `${activeAvailabilityCount} currently active`,
+            value: String(availabilityCount),
+            detail: null,
             href: "/admin/availabilities",
         },
     ];
 
     return (
-        <KpiRow columns={3}>
-            {items.map((item) => (
-                <div
-                    key={item.href}
-                    className="flex flex-col items-start"
+        <div className="grid gap-x-8 gap-y-6 sm:grid-cols-3">
+            {stats.map((stat) => (
+                <section
+                    key={stat.href}
+                    className="flex flex-col gap-0.5"
                 >
-                    <KpiTile
-                        label={item.label}
-                        value={String(item.value)}
-                        detail={item.detail}
-                    />
+                    <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                        {stat.label}
+                    </span>
+
+                    <span className="text-3xl font-semibold tabular-nums">
+                        {stat.value}
+                    </span>
+
+                    <span className="min-h-5 text-sm text-muted-foreground">
+                        {stat.detail}
+                    </span>
 
                     <LinkButton
-                        href={item.href}
+                        href={stat.href}
                         variant="link"
                         size="xs"
-                        className="mt-1 px-0"
+                        className="mt-1 self-start px-0"
                     >
                         Manage
                     </LinkButton>
-                </div>
+                </section>
             ))}
-        </KpiRow>
+        </div>
     );
 }

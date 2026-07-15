@@ -1,10 +1,10 @@
-import { CountBar } from "@/features/charts/count-bar";
-import {
-    DoctorStatusDonutLoader,
-} from "@/features/charts/doctor-status-donut-loader";
+import { CountBarLoader } from "@/features/charts/count-bar-loader";
 import type {
     DistributionDonutDatum,
 } from "@/features/charts/distribution-donut";
+import {
+    DoctorStatusDonutLoader,
+} from "@/features/charts/doctor-status-donut-loader";
 import type { Department } from "@/types/department";
 import type { DoctorProfile } from "@/types/doctor";
 
@@ -17,15 +17,15 @@ export function AdminDoctorAnalytics({
     departments,
     doctors,
 }: AdminDoctorAnalyticsProps) {
-    const doctorsPerDepartment = departments.map(
-        (department) => ({
+    const doctorsPerDepartment = departments
+        .map((department) => ({
             label: department.name,
             count: doctors.filter(
                 (doctor) =>
                     doctor.departmentId === department.id,
             ).length,
-        }),
-    );
+        }))
+        .filter((item) => item.count > 0);
 
     const activeDoctorCount = doctors.filter(
         (doctor) => doctor.active,
@@ -41,50 +41,34 @@ export function AdminDoctorAnalytics({
         {
             key: "inactive",
             label: "Inactive",
-            count: doctors.length - activeDoctorCount,
+            count:
+                doctors.length - activeDoctorCount,
             color: "grey",
         },
     ];
 
     return (
-        <div className="grid gap-8 md:grid-cols-2">
-            <section className="flex min-w-0 flex-col gap-4">
-                <div>
-                    <h2 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                        Doctors per department
-                    </h2>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                        Distribution of doctors across clinic departments.
-                    </p>
-                </div>
+        <div className="grid gap-8 sm:grid-cols-2">
+            <section className="flex flex-col gap-2">
+                <h2 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                    Doctors per department
+                </h2>
 
-                <CountBar
+                <CountBarLoader
                     data={doctorsPerDepartment}
-                    countLabel="doctors"
-                    emptyMessage="No doctors are assigned to departments."
+                    countLabel="Doctors"
                 />
             </section>
 
-            <section className="flex min-w-0 flex-col gap-4">
-                <div>
-                    <h2 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                        Doctor status
-                    </h2>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                        Active and inactive doctor profiles.
-                    </p>
-                </div>
+            <section className="flex flex-col gap-2">
+                <h2 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                    Doctor status
+                </h2>
 
-                {doctors.length > 0 ? (
-                    <DoctorStatusDonutLoader
-                        data={doctorStatusDistribution}
-                        totalLabel="doctors"
-                    />
-                ) : (
-                    <p className="py-8 text-sm text-muted-foreground">
-                        No doctor data available.
-                    </p>
-                )}
+                <DoctorStatusDonutLoader
+                    data={doctorStatusDistribution}
+                    totalLabel="Doctors"
+                />
             </section>
         </div>
     );
