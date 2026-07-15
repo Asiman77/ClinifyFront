@@ -4,6 +4,7 @@ import {
     CalendarAdd01Icon,
     FileAttachmentIcon,
     Home01Icon,
+    StethoscopeIcon,
     TestTube01Icon,
 } from "@hugeicons/core-free-icons";
 
@@ -28,6 +29,11 @@ const NAVIGATION_BY_ROLE = {
             href: "/admin/departments",
             label: "Departments",
             icon: Building02Icon,
+        },
+        {
+            href: "/admin/doctors",
+            label: "Doctors",
+            icon: StethoscopeIcon,
         },
     ],
 
