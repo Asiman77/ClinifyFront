@@ -1,24 +1,28 @@
 import Link from "next/link";
 
 import { LabStatusBadge } from "@/features/lab/components/lab-status-badge";
+import { MedicalRecordFiles } from "@/features/records/medical-record-files";
 import type { PatientLabResultSummary } from "@/types/lab";
+
 export function PatientLabResultRow({
     result,
 }: {
     result: PatientLabResultSummary;
 }) {
-    return (
-        <li>
-            <Link
-                href={`/patient/medical-records/${result.medicalRecordId}`}
-                className="-mx-2 flex flex-col gap-2 rounded-md px-2 py-3 outline-none transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
-            >
-                <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">
-                        {result.testName}
-                    </p>
+    const files = result.files ?? [];
 
-                    <p className="truncate text-sm text-muted-foreground">
+    return (
+        <li className="py-5 first:pt-0 last:pb-0">
+            <div className="flex items-start justify-between gap-4">
+                <Link
+                    href={`/patient/medical-records/${result.medicalRecordId}`}
+                    className="min-w-0 rounded-sm outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                    <h2 className="truncate text-sm font-medium">
+                        {result.testName}
+                    </h2>
+
+                    <p className="mt-1 text-sm text-muted-foreground">
                         {result.diagnosis}
                         {" \u00b7 "}
 
@@ -26,10 +30,43 @@ export function PatientLabResultRow({
                             {formatDate(result.recordDate)}
                         </time>
                     </p>
-                </div>
+                </Link>
 
                 <LabStatusBadge status={result.status} />
-            </Link>
+            </div>
+
+            <div className="mt-4 grid gap-4 rounded-md border bg-muted/20 p-4">
+                <section>
+                    <h3 className="text-xs font-medium uppercase text-muted-foreground">
+                        Result
+                    </h3>
+
+                    <p className="mt-1 whitespace-pre-wrap text-sm">
+                        {result.resultText?.trim() ||
+                            "Result details are not available yet."}
+                    </p>
+                </section>
+
+                {result.note?.trim() && (
+                    <section>
+                        <h3 className="text-xs font-medium uppercase text-muted-foreground">
+                            Technician note
+                        </h3>
+
+                        <p className="mt-1 whitespace-pre-wrap text-sm">
+                            {result.note}
+                        </p>
+                    </section>
+                )}
+
+                <section>
+                    <h3 className="mb-2 text-xs font-medium uppercase text-muted-foreground">
+                        Attachments
+                    </h3>
+
+                    <MedicalRecordFiles files={files} />
+                </section>
+            </div>
         </li>
     );
 }
