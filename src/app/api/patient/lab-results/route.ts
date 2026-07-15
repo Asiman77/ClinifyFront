@@ -37,8 +37,8 @@ export async function GET(request: Request) {
         const queryString = searchParams.toString();
 
         const backendPath = queryString
-            ? `/api/records/patient/mine/lab-results?${queryString}`
-            : "/api/records/patient/mine/lab-results";
+            ? `/api/lab-responses/patient/mine?${queryString}`
+            : "/api/lab-responses/patient/mine";
 
         const { data, status, setCookies } =
             await backendRequest<
