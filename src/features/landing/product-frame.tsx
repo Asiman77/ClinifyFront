@@ -18,8 +18,21 @@ export function ProductFrame({
     sizes = "(min-width: 1024px) 1000px, 100vw",
 }: ProductFrameProps) {
     return (
-        <div className={cn("relative aspect-[16/10] overflow-hidden rounded-md", "border-4 border-black/10 bg-muted shadow-2xl", className,)} >
-            <Image src={src} alt={alt} fill priority={priority} sizes={sizes} className="object-cover object-left-top" />
+        <div
+            className={cn(
+                "relative aspect-[16/10] overflow-hidden rounded-md",
+                "border-4 border-black/10 bg-muted shadow-2xl",
+                className,
+            )}
+        >
+            <Image
+                src={src}
+                alt={alt}
+                fill
+                priority={priority}
+                sizes={sizes}
+                className="object-cover object-left-top"
+            />
         </div>
     );
 }

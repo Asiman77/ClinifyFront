@@ -32,9 +32,8 @@ const FEATURES = [
 
 export function HowItWorks() {
     return (
-        <section id="how-it-works" className="scroll-mt-16 bg-background py-20"
-        >
-            <div className="mx-auto max-w-6xl px-6">
+        <section id="how-it-works" className="scroll-mt-16 bg-background" >
+            <div className="mx-auto w-full max-w-[1000px] px-6 py-24">
                 <div className="mx-auto flex max-w-2xl flex-col items-center gap-4 text-center">
                     <span className="inline-flex items-center gap-2 text-sm font-medium text-primary uppercase">
                         <HugeiconsIcon
@@ -45,9 +44,8 @@ export function HowItWorks() {
                         How Clinify Works
                     </span>
 
-                    <h2 className="text-3xl font-semibold text-balance text-foreground sm:text-4xl">
-                        Appointments, records, and lab results in one system, always in
-                        sync.
+                    <h2 className="font-heading text-3xl font-semibold text-balance text-foreground sm:text-4xl">
+                        Appointments, records, and lab results in one system, always in sync.
                     </h2>
 
                     <p className="text-base text-pretty text-muted-foreground">
@@ -56,12 +54,12 @@ export function HowItWorks() {
                     </p>
                 </div>
 
-                <div className="mt-14 grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-12">
+                <div className="mt-24 grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-12">
                     {FEATURES.map((feature) => (
                         <FeatureCard key={feature.title} title={feature.title} body={feature.body} alt={feature.alt} src={feature.src} />
                     ))}
                 </div>
             </div>
-        </section>
+        </section >
     );
 }

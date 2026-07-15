@@ -28,9 +28,8 @@ const PROBLEMS = [
 
 export function ProblemSection() {
     return (
-        <section id="problem" className="scroll-mt-16 bg-background py-20"
-        >
-            <div className="mx-auto max-w-6xl px-6">
+        <section id="problem" className="scroll-mt-16 flex min-h-[344px] items-center bg-background" >
+            <div className="mx-auto w-full max-w-[1440px] px-6 py-16">
                 <h2 className="sr-only">Problems Clinify solves</h2>
 
                 <div className="grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-border">
@@ -42,7 +41,7 @@ export function ProblemSection() {
                                 aria-hidden
                             />
 
-                            <h3 className="text-lg font-semibold text-foreground">
+                            <h3 className="font-heading text-lg font-semibold text-foreground">
                                 {problem.title}
                             </h3>
 

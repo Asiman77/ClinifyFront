@@ -51,14 +51,10 @@ export function LandingNav({ dashboardHref }: LandingNavProps) {
 
     return (
         <header
-            className={cn(
-                "sticky top-0 z-50 w-full border-b transition-colors duration-300",
-                scrolled
-                    ? "border-border bg-background/85 backdrop-blur-md"
-                    : "border-transparent",
+            className={cn("sticky top-0 z-50 h-16 w-full border-b transition-colors duration-300", scrolled ? "border-border bg-background/85 backdrop-blur-md" : "border-transparent",
             )}
         >
-            <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+            <div className="mx-auto flex h-full w-full max-w-[1000px] items-center justify-between gap-6 px-6">
                 <Link href="/" aria-label="Clinify home">
                     <BrandLockup tone={scrolled ? "default" : "light"} />
                 </Link>
