@@ -95,7 +95,7 @@ export default function AdminDepartmentsPage() {
             )}
 
             {!error && departments.length > 0 && (
-                <div className="overflow-x-auto rounded-md border">
+                <div className="overflow-x-auto">
                     <table className="w-full min-w-160 text-sm">
                         <thead className="bg-muted/50 text-left">
                             <tr>
@@ -117,10 +117,6 @@ export default function AdminDepartmentsPage() {
                                     <td className="px-4 py-3">
                                         <p className="font-medium">
                                             {department.name}
-                                        </p>
-                                        <p className="mt-1 max-w-md text-muted-foreground">
-                                            {department.description ||
-                                                "No description provided."}
                                         </p>
                                     </td>
 
