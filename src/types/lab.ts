@@ -64,6 +64,18 @@ export type LabResponse = {
     updatedAt: string;
 };
 
+export type PatientLabResultSummary = {
+    id: number;
+    medicalRecordId: number;
+    diagnosis: string;
+    recordDate: string;
+    testName: string;
+    status: LabStatus;
+    resultText: string | null;
+    note: string | null;
+    files: LabResponseFile[];
+};
+
 export type UpdateLabResponseRequest = {
     resultText?: string;
     note?: string;

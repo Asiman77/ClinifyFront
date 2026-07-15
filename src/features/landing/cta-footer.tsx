@@ -15,7 +15,7 @@ export function CtaFooter() {
                     className="object-cover object-[center_60%]"
                 />
 
-                <div className="absolute inset-0 bg-[linear-gradient(to_top,transparent_55%,#fff_100%)]" />
+                <div className="absolute inset-0 bg-[linear-gradient(to_top,transparent_55%,var(--background)_100%)]" />
             </div>
 
             <Reveal className="mx-auto flex w-full max-w-[1000px] flex-1 flex-col items-center justify-center gap-9 text-center">
