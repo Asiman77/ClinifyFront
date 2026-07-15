@@ -43,17 +43,20 @@ const availabilityBaseSchema = z.object({
     active: z.boolean(),
 });
 
+const updateAvailabilityBaseSchema =
+    availabilityBaseSchema.omit({
+        doctorId: true,
+    });
+
 export const availabilityFormSchema =
     availabilityBaseSchema.superRefine(
         addWindowValidation,
     );
 
 export const updateAvailabilityFormSchema =
-    availabilityBaseSchema
-        .omit({
-            doctorId: true,
-        })
-        .superRefine(addWindowValidation);
+    updateAvailabilityBaseSchema.superRefine(
+        addWindowValidation,
+    );
 
 export type AvailabilityFormValues = z.infer<
     typeof availabilityFormSchema
